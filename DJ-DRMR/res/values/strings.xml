@@ -4,5 +4,9 @@
     <string name="app_name">DJ-DRMR</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    
+    <!--  soundcloud utility strings  -->
+    <string name="client_id">0724aaed3681642b2c352cea90e79297</string>
+    <string name="client_secret">b18ec752d35fce1a99169a2120698bad</string>
 
 </resources>

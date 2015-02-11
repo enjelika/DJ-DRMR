@@ -9,8 +9,17 @@
     tools:context="edu.uco.sdd.spring15.dj_drmr.DjdrmrMain" >
 
     <TextView
+        android:id="@+id/lblTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hello_world" />
+    
+    <Button
+        android:id="@+id/btnBrowse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Browse Soundcloud"
+        android:layout_below="@id/lblTitle" />
+        
 
 </RelativeLayout>
