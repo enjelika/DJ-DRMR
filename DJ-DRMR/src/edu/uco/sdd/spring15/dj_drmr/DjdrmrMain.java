@@ -31,4 +31,7 @@ public class DjdrmrMain extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	// This is just test from Donghan to test if I can actually commit...
+	
 }
