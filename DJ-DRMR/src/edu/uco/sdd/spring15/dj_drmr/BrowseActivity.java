@@ -11,6 +11,9 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ToggleButton;
 
 public class BrowseActivity extends Activity implements IMediaPlayerServiceClient 
 {
@@ -19,10 +22,12 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 	private MediaPlayerService mService;
 	private boolean bound;
 	
+	private ToggleButton playPauseButton;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		setContentView(R.layout.browse_activity);
 		bindToService();
 	}
 	
@@ -75,6 +80,49 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
             bound = false;
         }
     };
+    
+    private void initializeButtons() {
+        // PLAY/PAUSE BUTTON
+    	playPauseButton = (ToggleButton) findViewById(R.id.btnPlayPause);
+        playPauseButton.setOnClickListener(new OnClickListener() {
+ 
+            @Override
+            public void onClick(View v) {
+                if (bound) {
+                    mp = mService.getMediaPlayer();
+ 
+                    //pressed pause ->pause
+                    if (!playPauseButton.isChecked()) {
+ 
+                        if (mp.isStarted()) {
+                            mService.pauseMediaPlayer();
+                        }
+ 
+                    }
+ 
+                    //pressed play
+                    else if (playPauseButton.isChecked()) {
+                        // STOPPED, CREATED, EMPTY, -> initialize
+                        if (mp.isStopped()
+                                || mp.isCreated()
+                                || mp.isEmpty())
+                        {
+                            mService.initializeMediaPlayer("https://api.soundcloud.com/tracks");
+                        }
+ 
+                        //prepared, paused -> resume play
+                        else if (mp.isPrepared()
+                                || mp.isPaused())
+                        {
+                            mService.startMediaPlayer();
+                        }
+ 
+                    }
+                }
+            }
+ 
+        });
+    }
 	    
     private boolean MediaPlayerServiceRunning() {
     	 

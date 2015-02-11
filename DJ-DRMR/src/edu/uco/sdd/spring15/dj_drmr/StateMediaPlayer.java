@@ -95,4 +95,8 @@ public class StateMediaPlayer extends MediaPlayer
 	public boolean isPrepared() {
 		return (mState == MPlayerStates.PREPARED);
 	}
+	
+	public boolean isEmpty() {
+		return (mState == MPlayerStates.EMPTY);
+	}
 }
