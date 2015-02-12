@@ -5,6 +5,5 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="lib" path="C:/Users/melicent/Downloads/java-api-wrapper-1.2.0-all.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

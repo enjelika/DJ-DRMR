@@ -16,6 +16,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import edu.uco.sdd.spring15.dj_drmr.BrowseActivity;
+
 public class MediaPlayerService extends Service implements OnBufferingUpdateListener, OnInfoListener, 
 																	OnPreparedListener, OnErrorListener {
 	
@@ -119,6 +121,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		System.out.println("in service -s tarted");
 		return START_STICKY;
 	}
 	

@@ -1,9 +1,13 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 public class DjdrmrMain extends Activity {
 
@@ -11,6 +15,15 @@ public class DjdrmrMain extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.djdrmr_main);
+		Button btnBrowse = (Button) findViewById(R.id.btnBrowse);
+		btnBrowse.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(DjdrmrMain.this, BrowseActivity.class);	
+				startActivity(intent);
+			}
+		});
 	}
 
 	@Override

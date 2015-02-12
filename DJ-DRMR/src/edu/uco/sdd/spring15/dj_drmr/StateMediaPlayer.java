@@ -25,21 +25,27 @@ public class StateMediaPlayer extends MediaPlayer
 	
 	public StateMediaPlayer(String dataSourceUrl) {
 		super();
-		setDataSource(dataSourceUrl);
-	}
-	
-	// reference to a streamStation or whatever
-	// TODO: for now i will just set the datasource directly
-	// however in the future this should be done through a class
-	public void setDataSource(String url) {
 		try {
-			setDataSource(url);
+			setDataSource(dataSourceUrl);
 			setState(MPlayerStates.CREATED);
 		} catch (Exception e) {
 			Log.e("StateMediaPlayer", "setDataSource failed");
 			setState(MPlayerStates.ERROR);
 		}
 	}
+	
+	// reference to a streamStation or whatever
+	// TODO: for now i will just set the datasource directly
+	// however in the future this should be done through a class
+//	public void setDataSource(StreamStation orWhatever...) {
+//		try {
+//			setDataSource(url);
+//			setState(MPlayerStates.CREATED);
+//		} catch (Exception e) {
+//			Log.e("StateMediaPlayer", "setDataSource failed");
+//			setState(MPlayerStates.ERROR);
+//		}
+//	}
 	
 	// TODO: will also need to be changed to a class
 	public void setState(MPlayerStates state) {

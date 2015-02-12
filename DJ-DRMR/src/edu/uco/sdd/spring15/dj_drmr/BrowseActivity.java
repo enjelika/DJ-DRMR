@@ -22,12 +22,11 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 	private MediaPlayerService mService;
 	private boolean bound;
 	
-	private ToggleButton playPauseButton;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.browse_activity);
+		initializeButtons();
 		bindToService();
 	}
 	
@@ -57,9 +56,9 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
             bound = true;
  
             // TODO: update the UI...?
-//	            //Set play/pause button to reflect state of the service's contained player
-//	            final ToggleButton playPauseButton = (ToggleButton) findViewById(R.id.playPauseButton);
-//	            playPauseButton.setChecked(mService.getMediaPlayer().isPlaying());
+	            //Set play/pause button to reflect state of the service's contained player
+	            final ToggleButton playPauseButton = (ToggleButton) findViewById(R.id.btnPlayPause);
+	            playPauseButton.setChecked(mService.getMediaPlayer().isPlaying());
  
 //	            //Set station Picker to show currently set stream station
 //	            Spinner stationPicker = (Spinner) findViewById(R.id.stationPicker);
@@ -83,7 +82,7 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
     
     private void initializeButtons() {
         // PLAY/PAUSE BUTTON
-    	playPauseButton = (ToggleButton) findViewById(R.id.btnPlayPause);
+    	final ToggleButton playPauseButton = (ToggleButton) findViewById(R.id.btnPlayPause);
         playPauseButton.setOnClickListener(new OnClickListener() {
  
             @Override
@@ -107,7 +106,8 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
                                 || mp.isCreated()
                                 || mp.isEmpty())
                         {
-                            mService.initializeMediaPlayer("https://api.soundcloud.com/tracks");
+                            mService.initializeMediaPlayer(
+                            		"http://www.songspw.com/fileDownload/Songs/128/23718.mp3");
                         }
  
                         //prepared, paused -> resume play
@@ -139,13 +139,13 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 
 	@Override
 	public void onInitializePlayerStart(String msg) {
-		// TODO: UI stuff
+		
 	}
 
 	@Override
 	public void onInitializePlayerSuccess() {
-		// TODO UI stuff
-		
+		final ToggleButton btnPlayPause = (ToggleButton) findViewById(R.id.btnPlayPause);
+		btnPlayPause.setChecked(true);		
 	}
 
 	@Override
