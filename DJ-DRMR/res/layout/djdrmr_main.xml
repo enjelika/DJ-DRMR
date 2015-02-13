@@ -64,6 +64,23 @@
 		android:background="@drawable/custom_btn"
 		android:padding="10dp"
 		android:layout_centerHorizontal="true" />
-        
+
+    <Button
+        android:id="@+id/btn_RecordActivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/custom_btn"
+        android:gravity="center"
+        android:padding="10dp"
+        android:shadowColor="#0000CD"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="0.6"
+        android:text="@string/record_record"
+        android:textColor="#DAA520"
+        android:textSize="10pt"
+        android:textStyle="bold" />
 
 </RelativeLayout>

@@ -11,11 +11,18 @@ import android.widget.Button;
 
 public class DjdrmrMain extends Activity {
 
+	private static final String TAG = DjdrmrMain.class.getSimpleName(); 
+	
+	private Button btnBrowse;
+	private Button btnRecord;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.djdrmr_main);
-		Button btnBrowse = (Button) findViewById(R.id.btnBrowse);
+		
+		// Browse Activity
+		btnBrowse = (Button) findViewById(R.id.btnBrowse);
 		btnBrowse.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -24,6 +31,18 @@ public class DjdrmrMain extends Activity {
 				startActivity(intent);
 			}
 		});
+		
+		// Record Activity
+		btnRecord = (Button) findViewById(R.id.btn_RecordActivity);
+		btnRecord.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(DjdrmrMain.this, RecordActivity.class);
+				startActivity(intent);
+			}
+		});
+		
 	}
 
 	@Override
