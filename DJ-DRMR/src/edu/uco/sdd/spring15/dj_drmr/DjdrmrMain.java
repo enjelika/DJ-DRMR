@@ -11,16 +11,41 @@ import android.widget.Button;
 
 public class DjdrmrMain extends Activity {
 
-	private static final String TAG = DjdrmrMain.class.getSimpleName(); 
+	//private static final String TAG = DjdrmrMain.class.getSimpleName(); 
 	
 	private Button btnBrowse;
 	private Button btnRecord;
+	private Button btnLogin;
+	private Button btnSignUp;
+	private Button btnUpload;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.djdrmr_main);
 		
+		// Login Activity
+		btnLogin = (Button) findViewById(R.id.btnLogin);
+		btnLogin.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(DjdrmrMain.this, Login.class);	
+				startActivity(intent);
+			}
+		});
+				
+		// SignUp Activity
+		btnSignUp = (Button) findViewById(R.id.btnSignUp);
+		btnSignUp.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(DjdrmrMain.this, SignUp.class);	
+				startActivity(intent);
+			}
+		});
+				
 		// Browse Activity
 		btnBrowse = (Button) findViewById(R.id.btnBrowse);
 		btnBrowse.setOnClickListener(new OnClickListener() {
@@ -33,7 +58,7 @@ public class DjdrmrMain extends Activity {
 		});
 		
 		// Record Activity
-		btnRecord = (Button) findViewById(R.id.btn_RecordActivity);
+		btnRecord = (Button) findViewById(R.id.btnRecord);
 		btnRecord.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -43,6 +68,16 @@ public class DjdrmrMain extends Activity {
 			}
 		});
 		
+		// Upload Activity
+		btnUpload = (Button) findViewById(R.id.btnUpload);
+		btnUpload.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(DjdrmrMain.this, UploadActivity.class);	
+				startActivity(intent);
+			}
+		});
 	}
 
 	@Override
@@ -63,7 +98,4 @@ public class DjdrmrMain extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	// This is just test from Donghan to test if I can actually commit...
-	
 }

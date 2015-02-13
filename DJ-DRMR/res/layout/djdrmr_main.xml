@@ -9,10 +9,10 @@
     <LinearLayout
         android:id="@+id/title"
         android:background="@drawable/border"
-        android:padding="5dp"
+        android:padding="10dp"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="25dp"
         android:layout_marginTop="25dp"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal">
@@ -46,12 +46,51 @@
 	        android:text="@string/DRMR" />
     
     </LinearLayout>
-    
-    <Button
-        android:id="@+id/btnBrowse"
+
+	<Button
+        android:id="@+id/btnLogin"
         android:layout_below="@id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:text="@string/login"
+        android:textSize="10pt"
+		android:textStyle="bold"
+		android:textColor="#DAA520"
+		android:gravity="center"
+		android:shadowColor="#0000CD"
+		android:shadowDx="1"
+		android:shadowDy="1"
+		android:shadowRadius="0.6"
+		android:background="@drawable/custom_btn"
+		android:padding="10dp"
+		android:layout_centerHorizontal="true" />
+    
+	<Button
+        android:id="@+id/btnSignUp"
+        android:layout_below="@id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:text="@string/signup"
+        android:textSize="10pt"
+		android:textStyle="bold"
+		android:textColor="#DAA520"
+		android:gravity="center"
+		android:shadowColor="#0000CD"
+		android:shadowDx="1"
+		android:shadowDy="1"
+		android:shadowRadius="0.6"
+		android:background="@drawable/custom_btn"
+		android:padding="10dp"
+		android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/btnBrowse"
+        android:layout_below="@id/btnSignUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
         android:text="@string/browseSound"
         android:textSize="10pt"
 		android:textStyle="bold"
@@ -66,7 +105,28 @@
 		android:layout_centerHorizontal="true" />
 
     <Button
-        android:id="@+id/btn_RecordActivity"
+        android:id="@+id/btnRecord"
+        android:layout_below="@id/btnBrowse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="25dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/custom_btn"
+        android:gravity="center"
+        android:padding="10dp"
+        android:shadowColor="#0000CD"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="0.6"
+        android:text="@string/record_record"
+        android:textColor="#DAA520"
+        android:textSize="10pt"
+        android:textStyle="bold" />
+    
+    <Button
+        android:id="@+id/btnUpload"
+        android:layout_below="@id/btnRecord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -78,7 +138,7 @@
         android:shadowDx="1"
         android:shadowDy="1"
         android:shadowRadius="0.6"
-        android:text="@string/record_record"
+        android:text="@string/upload"
         android:textColor="#DAA520"
         android:textSize="10pt"
         android:textStyle="bold" />

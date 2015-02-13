@@ -21,6 +21,7 @@
 	        android:id="@+id/text01"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:background="@android:color/transparent"
 	        android:textSize="20pt"
 	        android:textStyle="bold"
 	        android:textColor="#DAA520"
@@ -30,6 +31,7 @@
 	        android:id="@+id/logo"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
+	        android:background="@android:color/transparent"
 	        android:contentDescription="@string/app_name"
 	        android:src="@drawable/ic_launcher"/>
 	    
@@ -37,6 +39,7 @@
 	        android:id="@+id/text02"
 	        android:layout_height="wrap_content"
 	        android:layout_width="wrap_content"
+	        android:background="@android:color/transparent"
 	        android:textSize="20pt"
 	        android:textStyle="bold"
 	        android:textColor="#DAA520"

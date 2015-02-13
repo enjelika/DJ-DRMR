@@ -4,14 +4,31 @@
     <string name="app_name">DJ-DRMR</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="browse">Browse</string>
-    <string name="button_label">Login</string>
+    
+    <!-- For logo/title header -->
     <string name="DJ">DJ</string>
     <string name="DRMR">DRMR</string>
-    <string name="browseSound">Browse SoundCloud</string>
+    
+    
+    <!-- login and sign up strings -->
+    <string name="button_label">Login</string>
     <string name="text_user_prompt">Username&#58;</string>
     <string name="text_pw_prompt">Password&#58;</string>
+    <string name="radlistener">Rad Listener</string>
+    <string name="signup">Sign Up&#33;</string>
+    <string name="login">Login</string>
+    <string name="radArtist">Rad Artist</string>
+    <string name="regpage">Registration Page</string>
+    <string name="logpage">Login Page</string>
+    <string name="submit">Submit</string>
+    <string name="email_prompt">Enter your email address&#58;</string>
+    <string name="username">Please enter username (email that was registered)</string>
+    <string name="enterusername">Enter username (email that was registered)</string>
 
+    <!-- Browse SoundCloud strings -->
+    <string name="browse">Browse</string>
+    <string name="browseSound">Browse SoundCloud</string>
+    
     <!-- soundcloud utility strings -->
     <string name="client_id">0724aaed3681642b2c352cea90e79297</string>
     <string name="client_secret">b18ec752d35fce1a99169a2120698bad</string>
@@ -24,5 +41,6 @@
     <string name="title_activity_upload">UploadActivity</string>
     
     <!-- Upload Activity -->
+    <string name="upload">Upload</string>
 	<string name="btnUpload">Choose File</string>
 </resources>
