@@ -24,6 +24,7 @@
 	        android:textSize="20pt"
 	        android:textStyle="bold"
 	        android:textColor="#DAA520"
+	        android:background="@android:color/transparent"
 	        android:text="@string/DJ" />
 	    
 	    <ImageView 
@@ -31,6 +32,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:contentDescription="@string/app_name"
+	        android:background="@android:color/transparent"
 	        android:src="@drawable/ic_launcher"/>
 	    
 	    <TextView
@@ -40,6 +42,7 @@
 	        android:textSize="20pt"
 	        android:textStyle="bold"
 	        android:textColor="#DAA520"
+	        android:background="@android:color/transparent"
 	        android:text="@string/DRMR" />
     
     </LinearLayout>
