@@ -7,8 +7,8 @@
     <uses-sdk
         android:minSdkVersion="16"
         android:targetSdkVersion="21" />
-    
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -28,9 +28,17 @@
             android:name=".BrowseActivity"
             android:label="@string/browse" >
         </activity>
+
         <service
-            android:name="edu.uco.sdd.spring15.dj_drmr.MediaPlayerService"
+            android:name=".MediaPlayerService"
             android:enabled="true" />
+
+        <activity android:name=".RecordActivity" >
+        </activity>
+        <activity
+            android:name=".UploadActivity"
+            android:label="@string/title_activity_upload" >
+        </activity>
     </application>
 
 </manifest>

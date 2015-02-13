@@ -11,17 +11,18 @@
     <string name="browseSound">Browse SoundCloud</string>
     <string name="text_user_prompt">Username&#58;</string>
     <string name="text_pw_prompt">Password&#58;</string>
-    
-    
-    <!--  soundcloud utility strings  -->
+
+    <!-- soundcloud utility strings -->
     <string name="client_id">0724aaed3681642b2c352cea90e79297</string>
     <string name="client_secret">b18ec752d35fce1a99169a2120698bad</string>
 
-    
     <!-- Record Activity -->
     <string name="record_record">Record</string>
     <string name="record_stop">Stop</string>
     <string name="record_play">Play</string>
     <string name="record_save">Save</string>
+    <string name="title_activity_upload">UploadActivity</string>
     
+    <!-- Upload Activity -->
+	<string name="btnUpload">Choose File</string>
 </resources>
