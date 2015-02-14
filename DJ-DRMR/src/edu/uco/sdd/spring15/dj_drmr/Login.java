@@ -1,6 +1,7 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 
@@ -12,6 +13,7 @@ public class Login extends Activity
 			super.onCreate(savedInstanceState);
 			// Get the view from new_activity.xml
 			setContentView(R.layout.login);
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
 
 		@Override

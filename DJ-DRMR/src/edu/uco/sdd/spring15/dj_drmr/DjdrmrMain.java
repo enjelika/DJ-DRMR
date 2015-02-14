@@ -2,6 +2,7 @@ package edu.uco.sdd.spring15.dj_drmr;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ public class DjdrmrMain extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.djdrmr_main);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		// Login Activity
 		btnLogin = (Button) findViewById(R.id.btnLogin);
