@@ -46,14 +46,24 @@
 			android:text="@string/DRMR" />
 		    
 	</LinearLayout>
+	
+    <TextView 
+        android:id="@+id/txtFileChose"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:text="@string/txtFileChose"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="50dp"
+        />
     
     <Button 
         android:id="@+id/btnUpload"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/txtFileChose"
         android:background="@drawable/custom_btn"
+        android:layout_marginLeft="90dp"
         android:padding="10dp"
         android:textSize="10pt"
 		android:textStyle="bold"

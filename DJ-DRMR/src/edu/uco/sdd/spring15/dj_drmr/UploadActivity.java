@@ -1,19 +1,25 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class UploadActivity extends Activity {
 	private Button btUpload;
-
+	private TextView txtFileChose;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -21,12 +27,13 @@ public class UploadActivity extends Activity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
 		this.btUpload = (Button) findViewById(R.id.btnUpload);
+		this.txtFileChose = (TextView) findViewById(R.id.txtFileChose);
 		
 		this.btUpload.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				 Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-			        fileintent.setType("audio/x-mpeg3");
+			        fileintent.setType("audio/mpeg");
 			        try {
 			            startActivityForResult(fileintent, 1);
 			        } catch (ActivityNotFoundException e) {
@@ -34,6 +41,17 @@ public class UploadActivity extends Activity {
 			        }
 			}
 		});
+	}
+	
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	       
+	    if (resultCode == Activity.RESULT_OK) {  
+	        Uri uri = data.getData();
+	        String path = uri.getPath();
+	        File input = new File(path);
+	        txtFileChose.setText(input.getName());
+	    }           
+	    super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
