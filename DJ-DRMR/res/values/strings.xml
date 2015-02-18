@@ -4,6 +4,14 @@
     <string name="app_name">DJ-DRMR</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_example">Search</string>
+    
+    <!-- Navigation Drawer -->
+    <string name="title_section1">Stream</string>
+    <string name="title_section2">Record</string>
+    <string name="title_section3">Playlists</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
     
     <!-- For logo/title header -->
     <string name="DJ">DJ</string>
