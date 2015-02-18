@@ -54,14 +54,14 @@ public class RecordActivity extends Activity {
 	    btnSave = (Button) findViewById(R.id.btn_save);
 	    
 // 		Check the Storage availability
-/*	    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+	    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 	    	if (!FILE_PATH.mkdir()) {
 	    		Log.d(TAG, "Could not create" + FILE_PATH);
 	    	} else {
 	    		Log.d(TAG, "External storage is required");
 	    		finish();
 	    	}
-	    }*/
+	    }
 
 	    
 //		(1)	    
