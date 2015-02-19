@@ -52,6 +52,9 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="@string/txtFileChose"
+        android:textStyle="bold"
+        android:textColor="#DAA520"
+        android:background="@android:color/transparent"
         android:layout_centerVertical="true"
         android:layout_marginLeft="50dp"
         />

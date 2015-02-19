@@ -51,5 +51,5 @@
     <!-- Upload Activity -->
     <string name="upload">Upload</string>
 	<string name="btnUpload">Choose File</string>
-	<string name="txtFileChose">No file chose</string>
+	<string name="txtFileChose">No file chosen</string>
 </resources>
