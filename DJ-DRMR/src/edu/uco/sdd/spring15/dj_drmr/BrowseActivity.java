@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class BrowseActivity extends Activity implements IMediaPlayerServiceClient 
@@ -125,6 +126,12 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
             }
  
         });
+        
+        TextView txtData = (TextView) findViewById(R.id.txtData);
+        SoundcloudResource resource = new SoundcloudResource(
+        		"/tracks?client_id=" + SoundcloudResource.clientId + "&format=json&genres=techno");
+        String data = resource.getSoundcloudData();
+        txtData.setText(data);
     }
 	    
     private boolean MediaPlayerServiceRunning() {
