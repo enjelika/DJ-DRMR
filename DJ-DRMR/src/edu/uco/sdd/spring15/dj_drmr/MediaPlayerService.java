@@ -15,7 +15,6 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-
 import edu.uco.sdd.spring15.dj_drmr.BrowseActivity;
 
 public class MediaPlayerService extends Service implements OnBufferingUpdateListener, OnInfoListener, 
@@ -48,6 +47,9 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 		mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		try {
 			mp.setDataSource(url);
+			SoundcloudResource soundcloud = new SoundcloudResource(
+					"/tracks?client_id={YOURCLIENTID}&q=berlin&format=json&genres=techno");
+			String result = soundcloud.getSoundcloudData();
 		} catch (Exception e) {
 			Log.e("MediaPlayerService", "error setting data source");
 			mp.setState(MPlayerStates.ERROR);
@@ -121,7 +123,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		System.out.println("in service -s tarted");
+		Log.d("MediaPlayerService", "service started");
 		return START_STICKY;
 	}
 	

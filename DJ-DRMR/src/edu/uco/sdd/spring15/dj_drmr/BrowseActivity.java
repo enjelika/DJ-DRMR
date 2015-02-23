@@ -126,12 +126,6 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
             }
  
         });
-        
-        TextView txtData = (TextView) findViewById(R.id.txtData);
-        SoundcloudResource resource = new SoundcloudResource(
-        		"/tracks?client_id=" + SoundcloudResource.clientId + "&format=json&genres=techno");
-        String data = resource.getSoundcloudData();
-        txtData.setText(data);
     }
 	    
     private boolean MediaPlayerServiceRunning() {

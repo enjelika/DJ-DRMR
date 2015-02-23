@@ -78,12 +78,6 @@
 					android:shadowDy="1"
 					android:shadowRadius="0.6" />
 		    
-		    <TextView
-		        android:id="@+id/txtData"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:text="@string/hello_world" />
-		    
 		</LinearLayout>
 		
     </LinearLayout>
