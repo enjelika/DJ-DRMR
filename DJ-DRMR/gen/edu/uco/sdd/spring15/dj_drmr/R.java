@@ -36,11 +36,16 @@ public final class R {
         public static final int ic_launcher=0x7f020005;
         public static final int ic_launcher_big=0x7f020006;
         public static final int menu_background=0x7f020007;
+        public static final int pic1=0x7f020008;
+        public static final int pic2=0x7f020009;
+        public static final int pic3=0x7f02000a;
+        public static final int pic4=0x7f02000b;
     }
     public static final class id {
         public static final int UserType=0x7f08001c;
-        public static final int action_example=0x7f080020;
-        public static final int action_settings=0x7f08001f;
+        public static final int action_example=0x7f080025;
+        public static final int action_settings=0x7f080024;
+        public static final int animation=0x7f08001f;
         public static final int browse_menu=0x7f080006;
         public static final int browse_tray=0x7f080007;
         public static final int btnBrowse=0x7f080010;
@@ -61,6 +66,10 @@ public final class R {
         public static final int main_menu=0x7f08000c;
         public static final int main_screen_buttons=0x7f08000d;
         public static final int navigation_drawer=0x7f08000b;
+        public static final int pic1=0x7f080020;
+        public static final int pic2=0x7f080021;
+        public static final int pic3=0x7f080022;
+        public static final int pic4=0x7f080023;
         public static final int radio0=0x7f08001d;
         public static final int radio1=0x7f08001e;
         public static final int recording_btn_tray=0x7f080017;
@@ -81,6 +90,7 @@ public final class R {
         public static final int login=0x7f030005;
         public static final int record_activity=0x7f030006;
         public static final int signup=0x7f030007;
+        public static final int splash_activity=0x7f030008;
     }
     public static final class menu {
         public static final int djdrmr_main=0x7f070000;
@@ -90,54 +100,55 @@ public final class R {
     public static final class string {
         /**  For logo/title header 
          */
-        public static final int DJ=0x7f050009;
-        public static final int DRMR=0x7f05000a;
+        public static final int DJ=0x7f05000a;
+        public static final int DRMR=0x7f05000b;
         public static final int action_example=0x7f050003;
         public static final int action_settings=0x7f050002;
+        public static final int animation=0x7f050004;
         public static final int app_name=0x7f050000;
         /**  Browse SoundCloud strings 
          */
-        public static final int browse=0x7f050018;
-        public static final int browseSound=0x7f050019;
-        public static final int btnUpload=0x7f050022;
+        public static final int browse=0x7f050019;
+        public static final int browseSound=0x7f05001a;
+        public static final int btnUpload=0x7f050023;
         /**  login and sign up strings 
          */
-        public static final int button_label=0x7f05000b;
+        public static final int button_label=0x7f05000c;
         /**  soundcloud utility strings 
          */
-        public static final int client_id=0x7f05001a;
-        public static final int client_secret=0x7f05001b;
-        public static final int email_prompt=0x7f050015;
-        public static final int enterusername=0x7f050017;
+        public static final int client_id=0x7f05001b;
+        public static final int client_secret=0x7f05001c;
+        public static final int email_prompt=0x7f050016;
+        public static final int enterusername=0x7f050018;
         public static final int hello_world=0x7f050001;
-        public static final int login=0x7f050010;
-        public static final int logpage=0x7f050013;
-        public static final int navigation_drawer_close=0x7f050008;
-        public static final int navigation_drawer_open=0x7f050007;
-        public static final int radArtist=0x7f050011;
-        public static final int radlistener=0x7f05000e;
-        public static final int record_play=0x7f05001e;
+        public static final int login=0x7f050011;
+        public static final int logpage=0x7f050014;
+        public static final int navigation_drawer_close=0x7f050009;
+        public static final int navigation_drawer_open=0x7f050008;
+        public static final int radArtist=0x7f050012;
+        public static final int radlistener=0x7f05000f;
+        public static final int record_play=0x7f05001f;
         /**  Record Activity 
          */
-        public static final int record_record=0x7f05001c;
-        public static final int record_save=0x7f05001f;
-        public static final int record_stop=0x7f05001d;
-        public static final int regpage=0x7f050012;
-        public static final int signup=0x7f05000f;
-        public static final int submit=0x7f050014;
-        public static final int text_pw_prompt=0x7f05000d;
-        public static final int text_user_prompt=0x7f05000c;
-        public static final int title_activity_upload=0x7f050020;
+        public static final int record_record=0x7f05001d;
+        public static final int record_save=0x7f050020;
+        public static final int record_stop=0x7f05001e;
+        public static final int regpage=0x7f050013;
+        public static final int signup=0x7f050010;
+        public static final int submit=0x7f050015;
+        public static final int text_pw_prompt=0x7f05000e;
+        public static final int text_user_prompt=0x7f05000d;
+        public static final int title_activity_upload=0x7f050021;
         /**  Navigation Drawer 
          */
-        public static final int title_section1=0x7f050004;
-        public static final int title_section2=0x7f050005;
-        public static final int title_section3=0x7f050006;
-        public static final int txtFileChose=0x7f050023;
+        public static final int title_section1=0x7f050005;
+        public static final int title_section2=0x7f050006;
+        public static final int title_section3=0x7f050007;
+        public static final int txtFileChose=0x7f050024;
         /**  Upload Activity 
          */
-        public static final int upload=0x7f050021;
-        public static final int username=0x7f050016;
+        public static final int upload=0x7f050022;
+        public static final int username=0x7f050017;
     }
     public static final class style {
         /** 
