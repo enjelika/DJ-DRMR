@@ -1,5 +1,9 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import edu.uco.sdd.spring15.dj_drmr.MediaPlayerService.MediaPlayerBinder;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -9,11 +13,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -126,6 +135,39 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
             }
  
         });
+        
+        ListView lvGenres = (ListView) findViewById(R.id.genreList);
+        Resources res = getResources();
+        String genres[] = res.getStringArray(R.array.soundcloud_genres);
+        final ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(this, R.layout.listitem, genres);
+        lvGenres.setAdapter(genreAdapter);
+
+		final ListView lvTracks = (ListView) findViewById(R.id.trackList);
+        
+        lvGenres.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				String genre = (String) parent.getItemAtPosition(position);
+				System.out.println("genre = " + genre);
+				SoundcloudResource resource = new SoundcloudResource(
+							"/tracks?client_id=" + SoundcloudResource.clientId + "&genres=" + genre);
+				while (!resource.hasData()) { /* wait for data */ }
+				String result = resource.getSoundcloudData();
+				try {
+					JSONArray json = new JSONArray(result);
+					String tracks[] = new String[json.length()];
+					for (int i = 0; i < json.length(); i++) {
+						tracks[i] = json.getJSONObject(i).getString("title").toString();
+						System.out.println(tracks[i]);
+					}
+					lvTracks.setAdapter(new ArrayAdapter<String>(BrowseActivity.this, R.layout.listitem, tracks));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		});
     }
 	    
     private boolean MediaPlayerServiceRunning() {

@@ -53,4 +53,38 @@
     <string name="upload">Upload</string>
 	<string name="btnUpload">Choose File</string>
 	<string name="txtFileChose">No file chosen</string>
+	
+	<!--  SoundCloud Genres -->
+	<string-array name="soundcloud_genres">
+	    <item>Alternative Rock</item>
+	    <item>Ambient</item>
+	    <item>Classical</item>
+	    <item>Country</item>
+	    <item>Dance &amp; EDM</item>
+	    <item>Dancehall</item>
+	    <item>Deep House</item>
+	    <item>Disco</item>
+	    <item>Drum &amp; Bass</item>
+	    <item>Dubstep</item>
+	    <item>Electronic</item>
+	    <item>Folk &amp; Singer-Songwriter</item>
+	    <item>Hip Hop &amp; Rap</item>
+	    <item>House</item>
+	    <item>Indie</item>
+	    <item>Jazz &amp; Blues</item>
+	    <item>Latin</item>
+	    <item>Metal</item>
+	    <item>Piano</item>
+	    <item>Pop</item>
+	    <item>R&amp;B &amp; Soul</item>
+	    <item>Reggae</item>
+	    <item>Reggaeton</item>
+	    <item>Rock</item>
+	    <item>Soundtrack</item>
+	    <item>Techno</item>
+	    <item>Trance</item>
+	    <item>Trap</item>
+	    <item>Trip Hop</item>
+	    <item>World</item>
+	</string-array>
 </resources>

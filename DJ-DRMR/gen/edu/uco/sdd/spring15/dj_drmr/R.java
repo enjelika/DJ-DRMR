@@ -8,6 +8,11 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
 public final class R {
+    public static final class array {
+        /**   SoundCloud Genres 
+         */
+        public static final int soundcloud_genres=0x7f060000;
+    }
     public static final class attr {
     }
     public static final class dimen {
@@ -36,50 +41,44 @@ public final class R {
         public static final int ic_launcher=0x7f020005;
         public static final int ic_launcher_big=0x7f020006;
         public static final int menu_background=0x7f020007;
-        public static final int pic1=0x7f020008;
-        public static final int pic2=0x7f020009;
-        public static final int pic3=0x7f02000a;
-        public static final int pic4=0x7f02000b;
     }
     public static final class id {
-        public static final int UserType=0x7f08001c;
-        public static final int action_example=0x7f080025;
-        public static final int action_settings=0x7f080024;
-        public static final int animation=0x7f08001f;
-        public static final int browse_menu=0x7f080006;
-        public static final int browse_tray=0x7f080007;
-        public static final int btnBrowse=0x7f080010;
-        public static final int btnLogin=0x7f08000e;
-        public static final int btnPlayPause=0x7f080008;
-        public static final int btnRecord=0x7f080011;
-        public static final int btnSignUp=0x7f08000f;
-        public static final int btnUpload=0x7f080005;
-        public static final int btn_play=0x7f080019;
-        public static final int btn_record=0x7f080018;
-        public static final int btn_save=0x7f08001a;
-        public static final int button1=0x7f080016;
-        public static final int container=0x7f08000a;
-        public static final int drawer_layout=0x7f080009;
-        public static final int editText1=0x7f080013;
-        public static final int editText2=0x7f080015;
-        public static final int logo=0x7f080002;
-        public static final int main_menu=0x7f08000c;
-        public static final int main_screen_buttons=0x7f08000d;
-        public static final int navigation_drawer=0x7f08000b;
-        public static final int pic1=0x7f080020;
-        public static final int pic2=0x7f080021;
-        public static final int pic3=0x7f080022;
-        public static final int pic4=0x7f080023;
-        public static final int radio0=0x7f08001d;
-        public static final int radio1=0x7f08001e;
-        public static final int recording_btn_tray=0x7f080017;
-        public static final int text01=0x7f080001;
-        public static final int text02=0x7f080003;
-        public static final int textView1=0x7f080012;
-        public static final int textView2=0x7f080014;
-        public static final int textView3=0x7f08001b;
-        public static final int title=0x7f080000;
-        public static final int txtFileChose=0x7f080004;
+        public static final int UserType=0x7f09001f;
+        public static final int action_example=0x7f090023;
+        public static final int action_settings=0x7f090022;
+        public static final int browse_menu=0x7f090006;
+        public static final int browse_tray=0x7f090007;
+        public static final int btnBrowse=0x7f090012;
+        public static final int btnLogin=0x7f090010;
+        public static final int btnPlayPause=0x7f090008;
+        public static final int btnRecord=0x7f090013;
+        public static final int btnSignUp=0x7f090011;
+        public static final int btnUpload=0x7f090005;
+        public static final int btn_play=0x7f09001c;
+        public static final int btn_record=0x7f09001b;
+        public static final int btn_save=0x7f09001d;
+        public static final int button1=0x7f090019;
+        public static final int container=0x7f09000c;
+        public static final int drawer_layout=0x7f09000b;
+        public static final int editText1=0x7f090016;
+        public static final int editText2=0x7f090018;
+        public static final int firstLine=0x7f090014;
+        public static final int genreList=0x7f090009;
+        public static final int logo=0x7f090002;
+        public static final int main_menu=0x7f09000e;
+        public static final int main_screen_buttons=0x7f09000f;
+        public static final int navigation_drawer=0x7f09000d;
+        public static final int radio0=0x7f090020;
+        public static final int radio1=0x7f090021;
+        public static final int recording_btn_tray=0x7f09001a;
+        public static final int text01=0x7f090001;
+        public static final int text02=0x7f090003;
+        public static final int textView1=0x7f090015;
+        public static final int textView2=0x7f090017;
+        public static final int textView3=0x7f09001e;
+        public static final int title=0x7f090000;
+        public static final int trackList=0x7f09000a;
+        public static final int txtFileChose=0x7f090004;
     }
     public static final class layout {
         public static final int activity_upload=0x7f030000;
@@ -87,15 +86,15 @@ public final class R {
         public static final int djdrmr_main=0x7f030002;
         public static final int fragment_main=0x7f030003;
         public static final int fragment_navigation_drawer=0x7f030004;
-        public static final int login=0x7f030005;
-        public static final int record_activity=0x7f030006;
-        public static final int signup=0x7f030007;
-        public static final int splash_activity=0x7f030008;
+        public static final int listitem=0x7f030005;
+        public static final int login=0x7f030006;
+        public static final int record_activity=0x7f030007;
+        public static final int signup=0x7f030008;
     }
     public static final class menu {
-        public static final int djdrmr_main=0x7f070000;
-        public static final int main=0x7f070001;
-        public static final int upload=0x7f070002;
+        public static final int djdrmr_main=0x7f080000;
+        public static final int main=0x7f080001;
+        public static final int upload=0x7f080002;
     }
     public static final class string {
         /**  For logo/title header 
@@ -171,11 +170,11 @@ public final class R {
         res/values-v11/styles.xml on API 14+ devices.
     
          */
-        public static final int AppBaseTheme=0x7f060000;
+        public static final int AppBaseTheme=0x7f070000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f060001;
-        public static final int MyActionBar=0x7f060002;
+        public static final int AppTheme=0x7f070001;
+        public static final int MyActionBar=0x7f070002;
     }
 }

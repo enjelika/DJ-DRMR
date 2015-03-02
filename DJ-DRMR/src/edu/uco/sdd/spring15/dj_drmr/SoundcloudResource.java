@@ -35,7 +35,8 @@ public class SoundcloudResource {
 	private String resourceUrl;
 	private ApiWrapper wrapper;
 	
-	private String soundcloudData;
+	private String soundcloudData = "none";
+	private boolean hasData;
 	
 	public SoundcloudResource() {
 		this(null);
@@ -44,6 +45,10 @@ public class SoundcloudResource {
 	public SoundcloudResource(String url) {
 		wrapper = new ApiWrapper(clientId, clientSecret, null, null);
 		this.resourceUrl = url;
+		hasData = false;
+		if (resourceUrl != null) {
+			pullData();
+		}
 	}
 	
 	public int getType() {
@@ -63,43 +68,25 @@ public class SoundcloudResource {
 	// 								to search for techno tracks with keyword "berlin" in json format
 	public void setResourceUrl(String resourceUrl) {
 		this.resourceUrl = resourceUrl;
+		pullData();
 	}
 	
 	public String getSoundcloudData() {
-//		StringBuilder sb = new StringBuilder();
-//		try {
-//			HttpResponse response = wrapper.get(Request.to(resourceUrl));
-//			// error is happening in line above
-//			/* below is from soundcloud api example */
-//			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-//				System.out.println(Http.formatJSON(Http.getString(response)));
-//			} else {
-//				System.out.println("invalid status received");
-//			}
-			/* below is from stackoverflow example */
-//			HttpEntity entity = response.getEntity();
-//			InputStream is = entity.getContent();
-//			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-//			String line = null;
-//			try {
-//				while ((line = reader.readLine()) != null) {
-//					sb.append(line + "\n");
-//				}
-//			} catch (IOException e) {
-//				Log.e("SoundcloudResource", "getSoundcloudData couldn't read response contents");
-//			}
-//		} catch (Exception e) {
-//			Log.e("SoundcloudResource", "getSoundcloudData couldn't get httpresponse");
-//			e.printStackTrace();
-//		}
-//		return sb.toString();
+		return this.soundcloudData;
+	}
+	
+	public void pullData() {
 		new AsyncCaller().execute();
-		return "";
+	}
+	
+	public boolean hasData() {
+		return this.hasData;
 	}
 
 	private class AsyncCaller extends AsyncTask<Void, Void, Void> {
 		@Override
 		protected Void doInBackground(Void... params) {
+			hasData = false;
 			try {
 				wrapper.login("melicentking@gmail.com", "DjDrmrIsAwesom3!@");
 			} catch (Exception e) {
@@ -111,7 +98,9 @@ public class SoundcloudResource {
 				// error is happening in line above
 				/* below is from soundcloud api example */
 				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					System.out.println(Http.formatJSON(Http.getString(response)));
+					soundcloudData = Http.formatJSON(Http.getString(response));
+//					System.out.println(soundcloudData);
+					hasData = true;
 				} else {
 					System.out.println("invalid status received: " + response.getStatusLine().getStatusCode());
 				}
