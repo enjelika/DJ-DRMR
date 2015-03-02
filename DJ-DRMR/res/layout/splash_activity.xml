@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <ViewFlipper
+        android:id="@+id/animation"
+        android:contentDescription="@string/animation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+        
+        <ImageView
+            android:id="@+id/pic1"
+            android:contentDescription="@string/animation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/pic1" />
+
+        <ImageView
+            android:id="@+id/pic2"
+            android:contentDescription="@string/animation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/pic2" />  
+            
+        <ImageView
+            android:id="@+id/pic3"
+            android:contentDescription="@string/animation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/pic3" />   
+            
+        <ImageView
+            android:id="@+id/pic4"
+            android:contentDescription="@string/animation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/pic4" />        
+        
+    </ViewFlipper>
+
+</RelativeLayout>

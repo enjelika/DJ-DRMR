@@ -1,0 +1,154 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:layout_gravity="center"
+    tools:context="edu.uco.sdd.spring15.dj_drmr.DjdrmrMain$MainFragment" >
+
+    <LinearLayout
+        android:id="@+id/main_menu"
+        android:orientation="vertical"
+        android:background="@android:color/transparent"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:padding="15dp"
+        android:layout_centerInParent="true">
+        
+	    <LinearLayout
+	        android:id="@+id/title"
+	        android:background="@drawable/border"
+	        android:padding="10dp"
+	        android:layout_height="wrap_content"
+	        android:layout_width="240dp"
+	        android:layout_marginBottom="25dp"
+	        android:orientation="horizontal">
+	        
+		    <TextView
+		        android:id="@+id/text01"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="8dp"
+				android:layout_marginLeft="23dp"
+		        android:textSize="15pt"
+		        android:textStyle="bold"
+		        android:textColor="#DAA520"
+		        android:background="@android:color/transparent"
+		        android:text="@string/DJ" />
+		    
+		    <ImageView 
+		        android:id="@+id/logo"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:contentDescription="@string/app_name"
+		        android:background="@android:color/transparent"
+		        android:src="@drawable/ic_launcher"/>
+		    
+		    <TextView
+		        android:id="@+id/text02"
+		        android:layout_height="wrap_content"
+		        android:layout_width="wrap_content"
+		        android:layout_marginTop="8dp"
+		        android:textSize="15pt"
+		        android:textStyle="bold"
+		        android:textColor="#DAA520"
+		        android:background="@android:color/transparent"
+		        android:text="@string/DRMR" />
+	    
+	    </LinearLayout>
+	
+	    <LinearLayout
+	        android:id="@+id/main_screen_buttons"
+	        android:layout_height="wrap_content"
+	        android:layout_width="240dp"
+	        android:background="@drawable/border"
+	        android:padding="12dp"
+	        android:orientation="vertical">
+	    
+				<Button
+			        android:id="@+id/btnLogin"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginBottom="25dp"
+			        android:text="@string/login"
+			        android:textSize="10pt"
+					android:textStyle="bold"
+					android:textColor="#DAA520"
+					android:gravity="center"
+					android:shadowColor="#0000CD"
+					android:shadowDx="1"
+					android:shadowDy="1"
+					android:shadowRadius="0.6"
+					android:background="@drawable/custom_btn"
+					android:padding="10dp" />
+			    
+				<Button
+			        android:id="@+id/btnSignUp"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginBottom="25dp"
+			        android:text="@string/signup"
+			        android:textSize="10pt"
+					android:textStyle="bold"
+					android:textColor="#DAA520"
+					android:gravity="center"
+					android:shadowColor="#0000CD"
+					android:shadowDx="1"
+					android:shadowDy="1"
+					android:shadowRadius="0.6"
+					android:background="@drawable/custom_btn"
+					android:padding="10dp" />
+			
+			    <Button
+			        android:id="@+id/btnBrowse"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginBottom="25dp"
+			        android:text="@string/browseSound"
+			        android:textSize="10pt"
+					android:textStyle="bold"
+					android:textColor="#DAA520"
+					android:gravity="center"
+					android:shadowColor="#0000CD"
+					android:shadowDx="1"
+					android:shadowDy="1"
+					android:shadowRadius="0.6"
+					android:background="@drawable/custom_btn"
+					android:padding="10dp" />
+			
+			    <Button
+			        android:id="@+id/btnRecord"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginBottom="25dp"
+			        android:background="@drawable/custom_btn"
+			        android:gravity="center"
+			        android:padding="10dp"
+			        android:shadowColor="#0000CD"
+			        android:shadowDx="1"
+			        android:shadowDy="1"
+			        android:shadowRadius="0.6"
+			        android:text="@string/record_record"
+			        android:textColor="#DAA520"
+			        android:textSize="10pt"
+			        android:textStyle="bold" />
+			    
+			    <Button
+			        android:id="@+id/btnUpload"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:background="@drawable/custom_btn"
+			        android:gravity="center"
+			        android:padding="10dp"
+			        android:shadowColor="#0000CD"
+			        android:shadowDx="1"
+			        android:shadowDy="1"
+			        android:shadowRadius="0.6"
+			        android:text="@string/upload"
+			        android:textColor="#DAA520"
+			        android:textSize="10pt"
+			        android:textStyle="bold" />
+	    
+	    </LinearLayout>
+	</LinearLayout>
+</RelativeLayout>

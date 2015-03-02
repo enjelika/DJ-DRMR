@@ -41,11 +41,16 @@ public final class R {
         public static final int ic_launcher=0x7f020005;
         public static final int ic_launcher_big=0x7f020006;
         public static final int menu_background=0x7f020007;
+        public static final int pic1=0x7f020008;
+        public static final int pic2=0x7f020009;
+        public static final int pic3=0x7f02000a;
+        public static final int pic4=0x7f02000b;
     }
     public static final class id {
         public static final int UserType=0x7f09001f;
-        public static final int action_example=0x7f090023;
-        public static final int action_settings=0x7f090022;
+        public static final int action_example=0x7f090028;
+        public static final int action_settings=0x7f090027;
+        public static final int animation=0x7f090022;
         public static final int browse_menu=0x7f090006;
         public static final int browse_tray=0x7f090007;
         public static final int btnBrowse=0x7f090012;
@@ -68,6 +73,10 @@ public final class R {
         public static final int main_menu=0x7f09000e;
         public static final int main_screen_buttons=0x7f09000f;
         public static final int navigation_drawer=0x7f09000d;
+        public static final int pic1=0x7f090023;
+        public static final int pic2=0x7f090024;
+        public static final int pic3=0x7f090025;
+        public static final int pic4=0x7f090026;
         public static final int radio0=0x7f090020;
         public static final int radio1=0x7f090021;
         public static final int recording_btn_tray=0x7f09001a;
@@ -90,6 +99,7 @@ public final class R {
         public static final int login=0x7f030006;
         public static final int record_activity=0x7f030007;
         public static final int signup=0x7f030008;
+        public static final int splash_activity=0x7f030009;
     }
     public static final class menu {
         public static final int djdrmr_main=0x7f080000;
