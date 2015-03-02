@@ -16,16 +16,18 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        
         <activity
-            android:name=".DjdrmrMain"
-            android:label="@string/app_name" >
-            
+            android:name="edu.uco.sdd.spring15.dj_drmr.SplashScreen"
+            android:label="@string/animation" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            </intent-filter>            
+        </activity>            
+        <activity
+            android:name=".DjdrmrMain"
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name=".BrowseActivity"
