@@ -53,6 +53,7 @@
     <string name="upload">Upload</string>
 	<string name="btnUpload">Choose File</string>
 	<string name="txtFileChose">No file chosen</string>
+	<string name="tags">TAGS</string>
 	
 	<!--  SoundCloud Genres -->
 	<string-array name="soundcloud_genres">
