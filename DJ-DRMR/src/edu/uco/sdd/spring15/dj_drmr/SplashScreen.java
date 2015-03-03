@@ -19,7 +19,7 @@ public class SplashScreen extends Activity {
 		
 		//ViewFlipper animation frames here
 		animation = (ViewFlipper) findViewById(R.id.animation);
-		animation.setFlipInterval(75);
+		animation.setFlipInterval(500); //500 is 0.5 sec
 		animation.startFlipping();		
 		
 		new LoadData().execute();

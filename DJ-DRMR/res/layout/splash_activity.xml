@@ -8,6 +8,7 @@
     <ViewFlipper
         android:id="@+id/animation"
         android:contentDescription="@string/animation"
+        android:background="@android:color/transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
