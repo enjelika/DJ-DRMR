@@ -16,16 +16,19 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        
+        <activity
+            android:name="edu.uco.sdd.spring15.dj_drmr.SplashScreen"
+            android:label="@string/animation" 
+			android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>            
+        </activity>            
         <activity
             android:name=".DjdrmrMain"
             android:label="@string/app_name" >
-            
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".BrowseActivity"
@@ -36,7 +39,7 @@
             android:label="@string/login" >
         </activity>
         <activity
-            android:name=".SignUp"
+            android:name=".Register"
             android:label="@string/signup" >
         </activity>
         <activity

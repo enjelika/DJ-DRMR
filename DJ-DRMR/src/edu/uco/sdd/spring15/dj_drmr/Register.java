@@ -2,15 +2,12 @@ package edu.uco.sdd.spring15.dj_drmr;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,10 +17,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class Login extends Activity implements OnClickListener{
+public class Register extends Activity implements OnClickListener{
 	
 	private EditText user, pass;
-	private Button mSubmit, mRegister;
+	private Button  mRegister;
 	
 	 // Progress Dialog
     private ProgressDialog pDialog;
@@ -31,10 +28,10 @@ public class Login extends Activity implements OnClickListener{
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
     
-  
-    private static final String LOGIN_URL = "http://www.raybvisions.com/webservice/login.php";
+
+    private static final String LOGIN_URL = "http://www.raybvisions.com/webservice/register.php";
     
-    //JSON element ids from repsonse of php script:
+    //ids
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 	
@@ -42,18 +39,13 @@ public class Login extends Activity implements OnClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.login);
+		setContentView(R.layout.register);
 		
-		//setup input fields
 		user = (EditText)findViewById(R.id.username);
 		pass = (EditText)findViewById(R.id.password);
 		
-		//setup buttons
-		mSubmit = (Button)findViewById(R.id.login);
+
 		mRegister = (Button)findViewById(R.id.register);
-		
-		//register listeners
-		mSubmit.setOnClickListener(this);
 		mRegister.setOnClickListener(this);
 		
 	}
@@ -61,21 +53,12 @@ public class Login extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		switch (v.getId()) {
-		case R.id.login:
-				new AttemptLogin().execute();
-			break;
-		case R.id.register:
-				Intent i = new Intent(this, Register.class);
-				startActivity(i);
-			break;
-
-		default:
-			break;
-		}
+		
+				new CreateUser().execute();
+		
 	}
 	
-	class AttemptLogin extends AsyncTask<String, String, String> {
+	class CreateUser extends AsyncTask<String, String, String> {
 
 		 /**
          * Before starting background thread Show Progress Dialog
@@ -85,8 +68,8 @@ public class Login extends Activity implements OnClickListener{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            pDialog = new ProgressDialog(Login.this);
-            pDialog.setMessage("Attempting login...");
+            pDialog = new ProgressDialog(Register.this);
+            pDialog.setMessage("Creating User...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
@@ -106,20 +89,19 @@ public class Login extends Activity implements OnClickListener{
                 params.add(new BasicNameValuePair("password", password));
  
                 Log.d("request!", "starting");
-                // getting product details by making HTTP request
+                
+                //Posting user data to script 
                 JSONObject json = jsonParser.makeHttpRequest(
                        LOGIN_URL, "POST", params);
  
-                // check your log for json response
+                // full json response
                 Log.d("Login attempt", json.toString());
  
-                // json success tag
+                // json success element
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
-                	Log.d("Login Successful!", json.toString());
-                	Intent i = new Intent(Login.this, ReadComments.class);
+                	Log.d("User Created!", json.toString());              	
                 	finish();
-    				startActivity(i);
                 	return json.getString(TAG_MESSAGE);
                 }else{
                 	Log.d("Login Failure!", json.getString(TAG_MESSAGE));
@@ -140,7 +122,7 @@ public class Login extends Activity implements OnClickListener{
             // dismiss the dialog once product deleted
             pDialog.dismiss();
             if (file_url != null){
-            	Toast.makeText(Login.this, file_url, Toast.LENGTH_LONG).show();
+            	Toast.makeText(Register.this, file_url, Toast.LENGTH_LONG).show();
             }
  
         }

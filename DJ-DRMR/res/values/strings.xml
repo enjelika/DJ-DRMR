@@ -24,7 +24,7 @@
     <string name="text_user_prompt">Username&#58;</string>
     <string name="text_pw_prompt">Password&#58;</string>
     <string name="radlistener">Rad Listener</string>
-    <string name="signup">Sign Up&#33;</string>
+    <string name="signup">Register&#33;</string>
     <string name="login">Login</string>
     <string name="radArtist">Rad Artist</string>
     <string name="regpage">Registration Page</string>
