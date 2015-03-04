@@ -159,7 +159,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks {
 				
 				@Override
 				public void onClick(View v) {
-					Intent intent = new Intent(getActivity(), SignUp.class);	
+					Intent intent = new Intent(getActivity(), Register.class);	
 					startActivity(intent);
 				}
 			});

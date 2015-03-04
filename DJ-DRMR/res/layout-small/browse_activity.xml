@@ -61,7 +61,8 @@
 	        android:id="@+id/browse_tray"
 	        android:background="@drawable/border"
 	        android:padding="15dp"
-	        android:layout_marginTop="100dp"
+	        android:layout_marginTop="15dp"
+	        android:layout_marginBottom="15dp"
 	        android:orientation="vertical"
 	        android:layout_width="240dp"
 	        android:layout_height="wrap_content" >
@@ -83,5 +84,16 @@
 		</LinearLayout>
 		
     </LinearLayout>
- 
+		
+	<ListView
+	    android:id="@+id/genreList"
+	    android:background="@drawable/border"
+	    android:padding="10dp"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@id/browse_menu"
+	    android:divider="#323232"
+	    android:dividerHeight="1dp"
+	    android:scrollbars="vertical" />
+	
 </RelativeLayout>

@@ -17,6 +17,7 @@ import android.os.IBinder;
 import android.util.Log;
 import edu.uco.sdd.spring15.dj_drmr.BrowseActivity;
 
+@SuppressWarnings("unused")
 public class MediaPlayerService extends Service implements OnBufferingUpdateListener, OnInfoListener, 
 																	OnPreparedListener, OnErrorListener {
 	
@@ -83,6 +84,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 		// not currently used
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void startMediaPlayer() {
 		Context context = getApplicationContext();
 		

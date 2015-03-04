@@ -22,7 +22,7 @@ public class RecordActivity extends Activity {
 	// Buttons
 	private Button btnRecord;
 	private Button btnPlay;
-	private Button btnSave;
+	//private Button btnSave;
 	
 	private boolean isRecording;
 	private MediaRecorder mRecorder;
@@ -51,7 +51,7 @@ public class RecordActivity extends Activity {
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	    btnRecord = (Button) findViewById(R.id.btn_record);
 	    btnPlay = (Button) findViewById(R.id.btn_play);
-	    btnSave = (Button) findViewById(R.id.btn_save);
+	    //btnSave = (Button) findViewById(R.id.btn_save);
 	    
 // 		Check the Storage availability
 	    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {

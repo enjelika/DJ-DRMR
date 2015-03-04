@@ -30,6 +30,7 @@
     <string name="regpage">Registration Page</string>
     <string name="logpage">Login Page</string>
     <string name="submit">Submit</string>
+    <string name="success">Success&#33;</string>
     <string name="email_prompt">Enter your email address&#58;</string>
     <string name="username">Please enter username (email that was registered)</string>
     <string name="enterusername">Enter username (email that was registered)</string>
@@ -37,6 +38,7 @@
     <!-- Browse SoundCloud strings -->
     <string name="browse">Browse</string>
     <string name="browseSound">Browse SoundCloud</string>
+    <string name="example">Example application</string>
     
     <!-- soundcloud utility strings -->
     <string name="client_id">0724aaed3681642b2c352cea90e79297</string>

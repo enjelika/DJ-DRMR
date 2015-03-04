@@ -1,11 +1,11 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+//import java.io.BufferedReader;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.io.InputStreamReader;
 
-import org.apache.http.HttpEntity;
+//import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 

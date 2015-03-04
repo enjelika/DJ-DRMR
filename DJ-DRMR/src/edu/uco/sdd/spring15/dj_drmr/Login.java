@@ -14,10 +14,14 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Login extends Activity implements OnClickListener{
@@ -138,14 +142,25 @@ public class Login extends Activity implements OnClickListener{
          * **/
         protected void onPostExecute(String file_url) {
             // dismiss the dialog once product deleted
-            pDialog.dismiss();
+        	/* Customized Toast - Debra */
+
+        	pDialog.dismiss();
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.custom_toast, 
+            							   (ViewGroup) findViewById(R.id.toast_layout_root));
+            
+            TextView text = (TextView) layout.findViewById(R.id.toast_txt);
+            text.setText(file_url);
+
             if (file_url != null){
-            	Toast.makeText(Login.this, file_url, Toast.LENGTH_LONG).show();
+            	Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.CENTER, 0, 0);
+            	toast.setDuration(Toast.LENGTH_LONG);
+            	toast.setView(layout);
+            	toast.show();
+            	//Toast.makeText(Register.this, file_url, Toast.LENGTH_LONG).show();
             }
- 
-        }
-		
+        }	
 	}
 		 
-
 }

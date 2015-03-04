@@ -12,7 +12,7 @@
         android:background="@android:color/transparent"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:padding="15dp"
+        android:padding="10dp"
         android:layout_centerInParent="true">
         
 	    <LinearLayout
@@ -21,15 +21,15 @@
 	        android:padding="10dp"
 	        android:layout_height="wrap_content"
 	        android:layout_width="240dp"
-	        android:layout_marginBottom="25dp"
+	        android:layout_marginBottom="15dp"
 	        android:orientation="horizontal">
 	        
 		    <TextView
 		        android:id="@+id/text01"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:layout_marginTop="8dp"
-				android:layout_marginLeft="23dp"
+		        android:layout_marginTop="5dp"
+				android:layout_marginLeft="15dp"
 		        android:textSize="15pt"
 		        android:textStyle="bold"
 		        android:textColor="#DAA520"
@@ -48,7 +48,7 @@
 		        android:id="@+id/text02"
 		        android:layout_height="wrap_content"
 		        android:layout_width="wrap_content"
-		        android:layout_marginTop="8dp"
+		        android:layout_marginTop="5dp"
 		        android:textSize="15pt"
 		        android:textStyle="bold"
 		        android:textColor="#DAA520"
@@ -71,7 +71,7 @@
 			        android:layout_height="wrap_content"
 			        android:layout_marginBottom="25dp"
 			        android:text="@string/login"
-			        android:textSize="10pt"
+			        android:textSize="8pt"
 					android:textStyle="bold"
 					android:textColor="#DAA520"
 					android:gravity="center"
@@ -88,7 +88,7 @@
 			        android:layout_height="wrap_content"
 			        android:layout_marginBottom="25dp"
 			        android:text="@string/signup"
-			        android:textSize="10pt"
+			        android:textSize="8pt"
 					android:textStyle="bold"
 					android:textColor="#DAA520"
 					android:gravity="center"
@@ -105,7 +105,7 @@
 			        android:layout_height="wrap_content"
 			        android:layout_marginBottom="25dp"
 			        android:text="@string/browseSound"
-			        android:textSize="10pt"
+			        android:textSize="8pt"
 					android:textStyle="bold"
 					android:textColor="#DAA520"
 					android:gravity="center"
@@ -130,7 +130,7 @@
 			        android:shadowRadius="0.6"
 			        android:text="@string/record_record"
 			        android:textColor="#DAA520"
-			        android:textSize="10pt"
+			        android:textSize="8pt"
 			        android:textStyle="bold" />
 			    
 			    <Button
@@ -146,7 +146,7 @@
 			        android:shadowRadius="0.6"
 			        android:text="@string/upload"
 			        android:textColor="#DAA520"
-			        android:textSize="10pt"
+			        android:textSize="8pt"
 			        android:textStyle="bold" />
 	    
 	    </LinearLayout>

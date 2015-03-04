@@ -2,7 +2,7 @@ package edu.uco.sdd.spring15.dj_drmr;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+//import org.json.JSONObject;
 
 import edu.uco.sdd.spring15.dj_drmr.MediaPlayerService.MediaPlayerBinder;
 import android.app.Activity;
@@ -23,7 +23,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
+//import android.widget.TextView;
 import android.widget.ToggleButton;
 
 public class BrowseActivity extends Activity implements IMediaPlayerServiceClient 
@@ -142,7 +142,7 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
         final ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(this, R.layout.listitem, genres);
         lvGenres.setAdapter(genreAdapter);
 
-		final ListView lvTracks = (ListView) findViewById(R.id.trackList);
+		//final ListView lvTracks = (ListView) findViewById(R.id.trackList);
         
         lvGenres.setOnItemClickListener(new OnItemClickListener() {
 
@@ -162,7 +162,14 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 						tracks[i] = json.getJSONObject(i).getString("title").toString();
 						System.out.println(tracks[i]);
 					}
-					lvTracks.setAdapter(new ArrayAdapter<String>(BrowseActivity.this, R.layout.listitem, tracks));
+					
+					//pass to fragment - Debra
+					TrackResultsFragment t = new TrackResultsFragment();
+					Bundle bundle = new Bundle();
+					bundle.putStringArray("results", tracks);
+					t.setArguments(bundle);
+					t.show(getFragmentManager(), result);
+					//lvTracks.setAdapter(new ArrayAdapter<String>(BrowseActivity.this, R.layout.listitem, tracks));
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

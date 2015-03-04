@@ -11,10 +11,14 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class Register extends Activity implements OnClickListener{
@@ -41,11 +45,11 @@ public class Register extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.register);
 		
-		user = (EditText)findViewById(R.id.username);
-		pass = (EditText)findViewById(R.id.password);
+		user = (EditText)findViewById(R.id.username2);
+		pass = (EditText)findViewById(R.id.password2);
 		
 
-		mRegister = (Button)findViewById(R.id.register);
+		mRegister = (Button)findViewById(R.id.register2);
 		mRegister.setOnClickListener(this);
 		
 	}
@@ -119,15 +123,26 @@ public class Register extends Activity implements OnClickListener{
          * After completing background task Dismiss the progress dialog
          * **/
         protected void onPostExecute(String file_url) {
-            // dismiss the dialog once product deleted
+            //dismiss the dialog once product deleted
+        	/* Customized Toast - Debra */
+        	
             pDialog.dismiss();
+            LayoutInflater inflater = getLayoutInflater();
+            View layout = inflater.inflate(R.layout.custom_toast, 
+            							   (ViewGroup) findViewById(R.id.toast_layout_root));
+            
+            TextView text = (TextView) layout.findViewById(R.id.toast_txt);
+            text.setText(file_url);
+
             if (file_url != null){
-            	Toast.makeText(Register.this, file_url, Toast.LENGTH_LONG).show();
+            	Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.CENTER, 0, 0);
+            	toast.setDuration(Toast.LENGTH_LONG);
+            	toast.setView(layout);
+            	toast.show();
+            	//Toast.makeText(Register.this, file_url, Toast.LENGTH_LONG).show();
             }
  
-        }
-		
+        }	
 	}
-		 
-
 }

@@ -28,6 +28,7 @@ import android.widget.Toast;
  * > design guidelines</a> for a complete explanation of the behaviors
  * implemented here.
  */
+@SuppressWarnings("deprecation")
 public class NavigationDrawerFragment extends Fragment {
 
 	/**
