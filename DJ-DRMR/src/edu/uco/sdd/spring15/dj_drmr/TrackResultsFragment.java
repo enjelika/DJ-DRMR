@@ -30,7 +30,8 @@ public class TrackResultsFragment extends DialogFragment{
 	
 	@Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-		trackList = savedInstanceState.getStringArray("results");
+		Bundle bundle = this.getArguments();
+		trackList = bundle.getStringArray("results");
 		
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setItems(trackList, new DialogInterface.OnClickListener() {

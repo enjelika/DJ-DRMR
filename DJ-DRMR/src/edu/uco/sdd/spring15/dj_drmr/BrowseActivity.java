@@ -4,10 +4,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 //import org.json.JSONObject;
 
+
+
 import edu.uco.sdd.spring15.dj_drmr.MediaPlayerService.MediaPlayerBinder;
+import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment.TrackResultsListener;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.DialogFragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -26,12 +30,14 @@ import android.widget.ListView;
 //import android.widget.TextView;
 import android.widget.ToggleButton;
 
-public class BrowseActivity extends Activity implements IMediaPlayerServiceClient 
+public class BrowseActivity extends Activity implements IMediaPlayerServiceClient, TrackResultsListener 
 {
 	
 	private StateMediaPlayer mp;
 	private MediaPlayerService mService;
 	private boolean bound;
+	private Resources res;
+	private String genres[];
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,8 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 		setContentView(R.layout.browse_activity);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
+		res = getResources();
+		genres = res.getStringArray(R.array.soundcloud_genres);
 		initializeButtons();
 		bindToService();
 	}
@@ -137,8 +145,6 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
         });
         
         ListView lvGenres = (ListView) findViewById(R.id.genreList);
-        Resources res = getResources();
-        String genres[] = res.getStringArray(R.array.soundcloud_genres);
         final ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(this, R.layout.listitem, genres);
         lvGenres.setAdapter(genreAdapter);
 
@@ -221,4 +227,9 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
         finish();
  
     }
+
+	@Override
+	public void onPickTrackClick(int trackIndex, DialogFragment dialog) {
+//		String genre = genres[trackIndex];
+	}
 }
