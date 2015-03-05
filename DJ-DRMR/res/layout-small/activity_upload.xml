@@ -81,4 +81,17 @@
 		android:shadowRadius="0.6"
         android:text="@string/btnUpload" />
 
+    <EditText 
+        android:id="@+id/editTextTags"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:layout_below="@id/btnUpload"
+        android:hint="@string/tags"
+        android:textColor="#DAA520"
+        android:textSize="10pt"
+        android:inputType="text"
+        />
 </RelativeLayout>
