@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.pm.ActivityInfo;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -13,8 +14,10 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment;
+import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogListener;
 
-public class RecordActivity extends Activity {
+public class RecordActivity extends Activity implements RecordDialogListener {
 
 
 	private static final String TAG = RecordActivity.class.getSimpleName();
@@ -71,11 +74,12 @@ public class RecordActivity extends Activity {
 			public void onClick(View v) {
 				if (!isRecording) {
 					// Record
-					Log.d(TAG, "Recording Started");
-					isRecording = true;
-					mRecorder = getRecorder(FILE_RECORDING);
-					mRecorder.start();
-					btnRecord.setText(R.string.record_stop);	
+					//isRecording = true;
+//					mRecorder = getRecorder(FILE_RECORDING);
+//					mRecorder.start();
+//					btnRecord.setText(R.string.record_stop);	
+					DialogFragment newFragment = new RecordDialogFragment();
+					newFragment.show(getFragmentManager(), "meta");
 				} else {
 					// Stop
 					Log.d(TAG, "Recording Stopped");
@@ -155,5 +159,21 @@ public class RecordActivity extends Activity {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+
+	@Override
+	public void onDialogPositiveClick(DialogFragment dialog) {
+		Log.i(TAG, "Record from Dialog");
+		isRecording = true;
+		mRecorder = getRecorder(FILE_RECORDING);
+		mRecorder.start();
+		btnRecord.setText(R.string.record_stop);	
+	}
+
+
+	@Override
+	public void onDialogNegativeClick(DialogFragment dialog) {
+		Log.i(TAG, "Record canceled from Dialog");
 	}
 }
