@@ -15,7 +15,8 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import edu.uco.sdd.spring15.dj_drmr.BrowseActivity;
+//import edu.uco.sdd.spring15.dj_drmr.BrowseActivity;
+import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain;
 
 @SuppressWarnings("unused")
 public class MediaPlayerService extends Service implements OnBufferingUpdateListener, OnInfoListener, 

@@ -6,11 +6,13 @@
     <string name="action_settings">Settings</string>
     <string name="action_example">Search</string>
     <string name="animation">Splash Screen Animation</string>
+    <string name="welcome_txt">Welcome&#33;</string>
     
     <!-- Navigation Drawer -->
-    <string name="title_section1">Stream</string>
-    <string name="title_section2">Record</string>
-    <string name="title_section3">Playlists</string>
+    <string name="title_section1">Welcome</string>
+    <string name="title_section2">Browse</string>
+    <string name="title_section3">Record</string>
+    <string name="title_section4">Upload</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     

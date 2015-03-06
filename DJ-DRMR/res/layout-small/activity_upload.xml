@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context="edu.uco.sdd.spring15.dj_drmr.UploadActivity" >
+    android:layout_gravity="center"
+    tools:context="edu.uco.sdd.spring15.dj_drmr.DjdrmrMain$UploadFragment" >
 
     <LinearLayout
 		android:id="@+id/title"

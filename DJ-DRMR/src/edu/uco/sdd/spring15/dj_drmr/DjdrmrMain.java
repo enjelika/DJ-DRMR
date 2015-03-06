@@ -1,23 +1,60 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import edu.uco.sdd.spring15.dj_drmr.MediaPlayerService.MediaPlayerBinder;
+import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment.TrackResultsListener;
+import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogListener;
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.Resources;
+import android.content.ServiceConnection;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.IBinder;
+import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
+import android.view.inputmethod.EditorInfo;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.app.ActionBar;
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.view.View.OnFocusChangeListener;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
+import android.webkit.WebView.FindListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
+import android.widget.ToggleButton;
+import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment;
+import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogListener;
 
 public class DjdrmrMain extends Activity implements 
-NavigationDrawerFragment.NavigationDrawerCallbacks {
+NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, RecordDialogListener {
 
 
 	/**
@@ -51,10 +88,35 @@ NavigationDrawerFragment.NavigationDrawerCallbacks {
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
 		FragmentManager fragmentManager = getFragmentManager();
-		fragmentManager
+		
+		switch(position) {
+		default: 
+		case 0: fragmentManager
+					.beginTransaction()
+					.replace(R.id.container,
+							WelcomeFragment.newInstance(position + 1)).commit();
+				break;
+		case 1: fragmentManager
+					.beginTransaction()
+					.replace(R.id.container,
+							BrowseFragment.newInstance(position + 1)).commit();
+				break;
+		case 2: fragmentManager
+					.beginTransaction()
+					.replace(R.id.container,
+							RecordFragment.newInstance(position + 1), "RecordFragment").commit();
+				break;
+		case 3: fragmentManager
+					.beginTransaction()
+					.replace(R.id.container,
+							UploadFragment.newInstance(position + 1)).commit();
+				break;
+		}
+		/*fragmentManager
 				.beginTransaction()
 				.replace(R.id.container,
 						PlaceholderFragment.newInstance(position + 1)).commit();
+		*/
 	}
 
 	public void onSectionAttached(int number) {
@@ -67,6 +129,9 @@ NavigationDrawerFragment.NavigationDrawerCallbacks {
 			break;
 		case 3:
 			mTitle = getString(R.string.title_section3);
+			break;
+		case 4:
+			mTitle = getString(R.string.title_section4);
 			break;
 		}
 	}
@@ -109,7 +174,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class PlaceholderFragment extends Fragment {
+	public static class WelcomeFragment extends Fragment {
 		private Button btnBrowse;
 		private Button btnRecord;
 		private Button btnLogin;
@@ -125,23 +190,23 @@ NavigationDrawerFragment.NavigationDrawerCallbacks {
 		/**
 		 * Returns a new instance of this fragment for the given section number.
 		 */
-		public static PlaceholderFragment newInstance(int sectionNumber) {
-			PlaceholderFragment fragment = new PlaceholderFragment();
+		public static WelcomeFragment newInstance(int sectionNumber) {
+			WelcomeFragment fragment = new WelcomeFragment();
 			Bundle args = new Bundle();
 			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 			fragment.setArguments(args);
 			return fragment;
 		}
 
-		public PlaceholderFragment() {
+		public WelcomeFragment() {
 		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_main, container,
+			View rootView = inflater.inflate(R.layout.fragment_welcome, container,
 					false);
-			
+			/*
 			// Login Activity
 			btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
 			btnLogin.setOnClickListener(new OnClickListener() {
@@ -196,7 +261,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks {
 					startActivity(intent);
 				}
 			});
-			
+			*/
 			return rootView;
 		}
 
@@ -207,4 +272,572 @@ NavigationDrawerFragment.NavigationDrawerCallbacks {
 					ARG_SECTION_NUMBER));
 		}
 	}
+	
+	public static class BrowseFragment extends Fragment implements IMediaPlayerServiceClient, TrackResultsListener, OnClickListener {
+		
+		private StateMediaPlayer mp;
+		private MediaPlayerService mService;
+		private boolean bound;
+		private Resources res;
+		private String genres[];
+		private ToggleButton btnPlayPause;
+        ListView lvGenres;
+		
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
+		private static final String ARG_SECTION_NUMBER = "section_number";
+
+		/**
+		 * Returns a new instance of this fragment for the given section number.
+		 */
+		public static BrowseFragment newInstance(int sectionNumber) {
+			BrowseFragment fragment = new BrowseFragment();
+			Bundle args = new Bundle();
+			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+			fragment.setArguments(args);
+			return fragment;
+		}
+
+		public BrowseFragment() {
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.browse_activity, container,
+					false);
+			
+			res = getResources();
+			genres = res.getStringArray(R.array.soundcloud_genres);
+			btnPlayPause = (ToggleButton) rootView.findViewById(R.id.btnPlayPause);
+			lvGenres = (ListView) rootView.findViewById(R.id.genreList);
+			initializeButtons();
+			bindToService();
+			
+			return rootView;
+		}
+
+		private void bindToService() {
+			Intent intent = new Intent(getActivity(), MediaPlayerService.class);
+			if (MediaPlayerServiceRunning()) {
+	            // Bind to LocalService
+	            getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	        }
+	        else {
+	            getActivity().startService(intent);
+	            getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	        }
+		}
+		
+		 private ServiceConnection mConnection = new ServiceConnection() {
+	        @Override
+	        public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+	            Log.d("MainActivity","service connected");
+	 
+	            //bound with Service. get Service instance
+	            MediaPlayerBinder binder = (MediaPlayerBinder) serviceBinder;
+	            mService = binder.getService();
+	 
+	            //send this instance to the service, so it can make callbacks on this instance as a client
+	            mService.setClient(BrowseFragment.this);
+	            bound = true;
+	 
+	            // TODO: update the UI...?
+		            //Set play/pause button to reflect state of the service's contained player
+		            btnPlayPause.setChecked(mService.getMediaPlayer().isPlaying());
+	 
+//		            //Set station Picker to show currently set stream station
+//		            Spinner stationPicker = (Spinner) findViewById(R.id.stationPicker);
+//		            if(mService.getMediaPlayer() != null && mService.getMediaPlayer().getStreamStation() != null) {
+//		                for (int i = 0; i < CONSTANTS.STATIONS.length; i++) {
+//		                    if (mService.getMediaPlayer().getStreamStation().equals(CONSTANTS.STATIONS[i])) {
+//		                        stationPicker.setSelection(i);
+//		                        mSelectedStream = (StreamStation) stationPicker.getItemAtPosition(i);
+//		                    }
+//		 
+//		                }
+//		            }
+	 
+	        }
+	 
+	        @Override
+	        public void onServiceDisconnected(ComponentName arg0) {
+	            bound = false;
+	        }
+	    };
+	    
+	    private void initializeButtons() {
+	        // PLAY/PAUSE BUTTON
+	        btnPlayPause.setOnClickListener(this);
+	        
+	        final ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem, genres);
+	        lvGenres.setAdapter(genreAdapter);
+
+			//final ListView lvTracks = (ListView) findViewById(R.id.trackList);
+	        
+	        lvGenres.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					String genre = (String) parent.getItemAtPosition(position);
+					System.out.println("genre = " + genre);
+					SoundcloudResource resource = new SoundcloudResource(
+								"/tracks?client_id=" + SoundcloudResource.clientId + "&genres=" + genre);
+					while (!resource.hasData()) { /* wait for data */ }
+					String result = resource.getSoundcloudData();
+					try {
+						JSONArray json = new JSONArray(result);
+						String tracks[] = new String[json.length()];
+						for (int i = 0; i < json.length(); i++) {
+							tracks[i] = json.getJSONObject(i).getString("title").toString();
+							System.out.println(tracks[i]);
+						}
+						
+						//pass to fragment - Debra
+						TrackResultsFragment t = new TrackResultsFragment();
+						Bundle bundle = new Bundle();
+						bundle.putStringArray("results", tracks);
+						t.setArguments(bundle);
+						t.show(getFragmentManager(), result);
+						//lvTracks.setAdapter(new ArrayAdapter<String>(BrowseActivity.this, R.layout.listitem, tracks));
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+	    }
+		    
+	    private boolean MediaPlayerServiceRunning() {
+	    	 
+	        ActivityManager manager = (ActivityManager) getActivity().getSystemService(ACTIVITY_SERVICE);
+	 
+	        for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+	            if ("edu.uco.sdd.spring15.dj_drmr.MediaPlayerService".equals(service.service.getClassName())) {
+	                return true;
+	            }
+	        }
+	 
+	        return false;
+	    }
+
+		@Override
+		public void onInitializePlayerStart(String msg) {
+			
+		}
+
+		@Override
+		public void onInitializePlayerSuccess() {
+			btnPlayPause.setChecked(true);		
+		}
+
+		@Override
+		public void onError() {
+			// TODO UI stuff
+			
+		}
+		
+		public void shutdownActivity() {
+			 
+	        if (bound) {
+	            mService.stopMediaPlayer();
+	            // Detach existing connection.
+	            getActivity().unbindService(mConnection);
+	            bound = false;
+	         }
+	 
+	        Intent intent = new Intent(getActivity(), MediaPlayerService.class);
+	        getActivity().stopService(intent);
+	        getActivity().finish();
+	 
+	    }
+
+		@Override
+		public void onPickTrackClick(int trackIndex, DialogFragment dialog) {
+//			String genre = genres[trackIndex];
+		}
+		
+		@Override
+		public void onAttach(Activity activity) {
+			super.onAttach(activity);
+			((DjdrmrMain) activity).onSectionAttached(getArguments().getInt(
+					ARG_SECTION_NUMBER));
+		}
+
+		@Override
+		public void onClick(View v) {
+			switch (v.getId()) {
+			case (R.id.btnPlayPause):
+				if (bound) {
+	                mp = mService.getMediaPlayer();
+	
+	                //pressed pause ->pause
+	                if (!btnPlayPause.isChecked()) {
+	
+	                    if (mp.isStarted()) {
+	                        mService.pauseMediaPlayer();
+	                    }
+	
+	                }
+	
+	                //pressed play
+	                else if (btnPlayPause.isChecked()) {
+	                    // STOPPED, CREATED, EMPTY, -> initialize
+	                    if (mp.isStopped()
+	                            || mp.isCreated()
+	                            || mp.isEmpty())
+	                    {
+	                        mService.initializeMediaPlayer(
+	                        		"http://www.songspw.com/fileDownload/Songs/128/23718.mp3");
+	                    }
+	
+	                    //prepared, paused -> resume play
+	                    else if (mp.isPrepared()
+	                            || mp.isPaused())
+	                    {
+	                        mService.startMediaPlayer();
+	                    }
+	
+	                }
+	            }
+			break;
+			}
+		}
+	}
+	
+	public static class RecordFragment extends Fragment implements RecordDialogListener {
+		
+		private static final String TAG = RecordFragment.class.getSimpleName();
+
+		// Buttons
+		private Button btnRecord;
+		private Button btnPlay;
+		//private Button btnSave;
+		
+		private boolean isRecording;
+		private MediaRecorder mRecorder;
+		
+		// Constant values for MediaRecorder
+		private static final int SAMPLEING_RATE = 44100;
+		private static final int BIT_RATE = 96000;
+		
+		// Hard directory to save file to
+		private static final File FILE_PATH = new File(
+				Environment.getExternalStorageDirectory(),
+				"Android/data/edu.uco.sdd.spring15.dj_drmr");
+		private static final File FILE_RECORDING = new File(FILE_PATH, "demo.mp4");
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
+		private static final String ARG_SECTION_NUMBER = "section_number";
+
+		/**
+		 * Returns a new instance of this fragment for the given section number.
+		 */
+		public static RecordFragment newInstance(int sectionNumber) {
+			RecordFragment fragment = new RecordFragment();
+			Bundle args = new Bundle();
+			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+			fragment.setArguments(args);
+			return fragment;
+		}
+
+		public RecordFragment() {
+		}
+
+		/**
+		 * (1) Handle the record/stop button
+		 * (2) Handle the play/stop button
+		 */
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.record_activity, container,
+					false);
+			
+			btnRecord = (Button) rootView.findViewById(R.id.btn_record);
+		    btnPlay = (Button) rootView.findViewById(R.id.btn_play);
+		    //btnSave = (Button) findViewById(R.id.btn_save);
+		    
+//	 		Check the Storage availability
+		    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+		    	if (!FILE_PATH.mkdir()) {
+		    		Log.d(TAG, "Could not create" + FILE_PATH);
+		    	} else {
+		    		Log.d(TAG, "External storage is required");
+		    		getActivity().finish();
+		    	}
+		    }
+
+		    
+//			(1)	    
+		    btnRecord.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if (!isRecording) {
+						// Record
+//						isRecording = true;
+//						mRecorder = getRecorder(FILE_RECORDING);
+//						mRecorder.start();
+//						btnRecord.setText(R.string.record_stop);	
+						DialogFragment newFragment = new RecordDialogFragment();
+						newFragment.show(getFragmentManager(), "meta");
+					} else {
+						// Stop
+						Log.d(TAG, "Recording Stopped");
+						mRecorder.stop();
+						mRecorder.reset();
+						mRecorder.release();
+						mRecorder = null;
+						isRecording = false;
+						
+						btnRecord.setText(R.string.record_record);
+					}
+				}
+			});
+		    
+//			(2)
+		    btnPlay.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					btnPlay.setEnabled(false);
+					btnRecord.setEnabled(false);
+					playRecorded(new MediaPlayer.OnCompletionListener() {
+						@Override
+						public void onCompletion(MediaPlayer mp) {
+							btnPlay.setEnabled(true);
+							btnRecord.setEnabled(true);
+						}
+					});
+				}
+			});
+			
+			return rootView;
+		}
+		
+		/**
+		 * @param path A path where file is saved.
+		 * @return Returns MediaRecorder object.
+		 * 
+		 * This create MediaRecorder object and 
+		 * set the default value of audio settings.
+		 * 
+		 */
+		private MediaRecorder getRecorder(File path) {
+			Log.d(TAG, "getRecorder");
+			MediaRecorder recorder = new MediaRecorder();
+			
+			recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+			recorder.setAudioSamplingRate(SAMPLEING_RATE);
+			recorder.setAudioEncodingBitRate(BIT_RATE);
+			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+			recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+			recorder.setOutputFile(path.getAbsolutePath());
+			
+			Log.i(TAG, "File path: " + path.getAbsolutePath());
+			Log.i(TAG, "File Recording to " + FILE_RECORDING);
+			try {
+				recorder.prepare();
+			} catch (IOException e) {
+				Log.d(TAG, "prepare failed");
+			}
+			return recorder;
+		}
+		
+		/**
+		 * @param onCompletion MediaPlayer.OnCompletionListener object
+		 * 
+		 * Play the sound recorded through absolute-path.
+		 */
+		private void playRecorded(MediaPlayer.OnCompletionListener onCompletion) {
+			Log.d(TAG, "playRecorded");
+			
+			MediaPlayer player = new MediaPlayer();
+			try {
+				player.setDataSource(FILE_RECORDING.getAbsolutePath());
+				player.prepare();
+				player.setOnCompletionListener(onCompletion);
+				player.start();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+
+		@Override
+		public void onDialogPositiveClick(DialogFragment dialog) {
+			Log.i(TAG, "Record from Dialog");
+			isRecording = true;
+			mRecorder = getRecorder(FILE_RECORDING);
+			mRecorder.start();
+			btnRecord.setText(R.string.record_stop);	
+		}
+
+
+		@Override
+		public void onDialogNegativeClick(DialogFragment dialog) {
+			Log.i(TAG, "Record canceled from Dialog");
+		}
+
+		@Override
+		public void onAttach(Activity activity) {
+			super.onAttach(activity);
+			((DjdrmrMain) activity).onSectionAttached(getArguments().getInt(
+					ARG_SECTION_NUMBER));
+		}
+	}
+
+	public static class UploadFragment extends Fragment {
+		
+		private Button btUpload;
+		private TextView txtFileChose;
+		private EditText editTextTags;
+		
+		/**
+		 * The fragment argument representing the section number for this
+		 * fragment.
+		 */
+		private static final String ARG_SECTION_NUMBER = "section_number";
+
+		/**
+		 * Returns a new instance of this fragment for the given section number.
+		 */
+		public static UploadFragment newInstance(int sectionNumber) {
+			UploadFragment fragment = new UploadFragment();
+			Bundle args = new Bundle();
+			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+			fragment.setArguments(args);
+			return fragment;
+		}
+
+		public UploadFragment() {
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container,
+				Bundle savedInstanceState) {
+			View rootView = inflater.inflate(R.layout.activity_upload, container,
+					false);
+			
+			this.btUpload = (Button) rootView.findViewById(R.id.btnUpload);
+			this.txtFileChose = (TextView) rootView.findViewById(R.id.txtFileChose);
+			this.editTextTags = (EditText) rootView.findViewById(R.id.editTextTags);
+			
+			this.btUpload.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					 Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
+				        fileintent.setType("audio/mpeg");
+				        try {
+				            startActivityForResult(fileintent, 1);
+				        } catch (ActivityNotFoundException e) {
+				            Log.e("tag", "No activity can handle picking a file. Showing alternatives.");
+				        }
+				}
+			});
+			
+			
+			this.editTextTags.setOnFocusChangeListener(new OnFocusChangeListener() {          
+			    public void onFocusChange(View v, boolean hasFocus) {
+			        if(!hasFocus) {
+			        	String text = editTextTags.getText().toString();
+			        	text = text.replaceAll("[^a-zA-Z ]+", "");
+			        	text = text.replaceAll("[ ]{2,}", " ");
+			        	String[] allTags = text.split(" ");
+			        	text = "";
+			        	for (String tag : allTags) {
+							tag = "#"+tag;
+							text = text + tag + " ";
+						}
+			        	editTextTags.setText(text);
+			        }
+			    }
+			});
+			
+			this.editTextTags.setOnEditorActionListener(new OnEditorActionListener() {
+			    @Override
+			    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			        if (actionId == EditorInfo.IME_ACTION_DONE) {
+			           editTextTags.clearFocus();
+			        }
+			        return false;
+			    }
+			});
+		
+			return rootView;
+		}
+
+		public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		       
+		    if (resultCode == Activity.RESULT_OK) {  
+		        Uri uri = data.getData();
+		        String path = uri.getPath();
+		        File input = new File(path);
+		        
+//		        File sdCardRoot = Environment.getExternalStorageDirectory();
+//		        File yourDir = new File(sdCardRoot, path);
+//		        for (File f : yourDir.listFiles()) {
+//		            if (f.isFile()){
+//		            	System.out.println(f.getName());
+//		            }
+//		        }
+		        
+		        txtFileChose.setText(input.getName());
+		    }           
+		    super.onActivityResult(requestCode, resultCode, data);
+		}
+
+		public boolean onCreateOptionsMenu(Menu menu) {
+			// Inflate the menu; this adds items to the action bar if it is present.
+			getActivity().getMenuInflater().inflate(R.menu.upload, menu);
+			return true;
+		}
+
+		@Override
+		public boolean onOptionsItemSelected(MenuItem item) {
+			// Handle action bar item clicks here. The action bar will
+			// automatically handle clicks on the Home/Up button, so long
+			// as you specify a parent activity in AndroidManifest.xml.
+			int id = item.getItemId();
+			if (id == R.id.action_settings) {
+				return true;
+			}
+			return super.onOptionsItemSelected(item);
+		}
+		
+		@Override
+		public void onAttach(Activity activity) {
+			super.onAttach(activity);
+			((DjdrmrMain) activity).onSectionAttached(getArguments().getInt(
+					ARG_SECTION_NUMBER));
+		}
+	}
+
+	@Override
+	public void onPickTrackClick(int trackIndex, DialogFragment dialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onDialogPositiveClick(DialogFragment dialog) {
+		// call the positive click method of the record fragment
+		RecordFragment mRecordFragment = (RecordFragment) getFragmentManager()
+				.findFragmentByTag("RecordFragment");
+		mRecordFragment.onDialogPositiveClick(dialog);
+	}
+
+	@Override
+	public void onDialogNegativeClick(DialogFragment dialog) {
+		// call the negative click method of the record fragment
+		RecordFragment mRecordFragment = (RecordFragment) getFragmentManager()
+				.findFragmentByTag("RecordFragment");
+		mRecordFragment.onDialogNegativeClick(dialog);
+	}
+	
 }
