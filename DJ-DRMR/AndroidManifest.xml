@@ -50,6 +50,10 @@
             android:name=".UploadActivity"
             android:label="@string/upload" >
         </activity>
+        <activity
+            android:name=".ReadComments"
+            android:label="@string/read_comments">
+        </activity>
         
         <service
             android:name=".MediaPlayerService"

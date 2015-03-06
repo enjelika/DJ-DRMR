@@ -123,7 +123,7 @@ public class Login extends Activity implements OnClickListener{
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
                 	Log.d("Login Successful!", json.toString());
-                	Intent i = new Intent(Login.this, ReadComments.class);
+                	Intent i = new Intent(Login.this, DjdrmrMain.class);
                 	finish();
     				startActivity(i);
                 	return json.getString(TAG_MESSAGE);

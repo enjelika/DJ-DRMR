@@ -22,6 +22,7 @@
     
     
     <!-- login and sign up strings -->
+    <string name="read_comments">Read Comments</string>
     <string name="button_label">Login</string>
     <string name="text_user_prompt">Username&#58;</string>
     <string name="text_pw_prompt">Password&#58;</string>
