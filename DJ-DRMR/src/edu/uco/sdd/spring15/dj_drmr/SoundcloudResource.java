@@ -6,9 +6,13 @@ package edu.uco.sdd.spring15.dj_drmr;
 //import java.io.InputStreamReader;
 
 //import org.apache.http.HttpEntity;
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -22,6 +26,7 @@ public class SoundcloudResource {
 	public static final String soundcloudUrl = "http://api.soundcloud.com";
 	public static final String clientId = "0724aaed3681642b2c352cea90e79297";
 	public static final String clientSecret = "b18ec752d35fce1a99169a2120698bad";
+	public static final String redirectUriString = "djdrmr://soundcloud/callback";
 	
 	// static resource type values
 	public static int RESOURCE_TYPE_USER = 1;
@@ -43,7 +48,14 @@ public class SoundcloudResource {
 	}
 	
 	public SoundcloudResource(String url) {
-		wrapper = new ApiWrapper(clientId, clientSecret, null, null);
+		URI redirect = null;
+		try {
+			redirect = new URI(redirectUriString);
+		} catch (URISyntaxException e) {
+			// invalid URI format
+			e.printStackTrace();
+		}
+		wrapper = new ApiWrapper(clientId, clientSecret, redirect, null);
 		this.resourceUrl = url;
 		hasData = false;
 		if (resourceUrl != null) {
