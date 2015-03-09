@@ -50,7 +50,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 		try {
 			mp.setDataSource(url);
 			SoundcloudResource soundcloud = new SoundcloudResource(
-					"/tracks?client_id=" + SoundcloudResource.clientId + "&q=berlin&format=json&genres=techno");
+					"/tracks?client_id=" + SoundcloudResource.CLIENT_ID + "&q=berlin&format=json&genres=techno");
 			String result = soundcloud.getSoundcloudData();
 		} catch (Exception e) {
 			Log.e("MediaPlayerService", "error setting data source");

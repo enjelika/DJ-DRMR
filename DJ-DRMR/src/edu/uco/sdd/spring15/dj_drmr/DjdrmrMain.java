@@ -385,7 +385,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 					String genre = (String) parent.getItemAtPosition(position);
 					System.out.println("genre = " + genre);
 					SoundcloudResource resource = new SoundcloudResource(
-								"/tracks?client_id=" + SoundcloudResource.clientId + "&genres=" + genre);
+								"/tracks?client_id=" + SoundcloudResource.CLIENT_ID + "&genres=" + genre);
 					while (!resource.hasData()) { /* wait for data */ }
 					String result = resource.getSoundcloudData();
 					try {

@@ -23,10 +23,10 @@ import com.soundcloud.api.Request;
 public class SoundcloudResource {
 
 	// static soundcloud values
-	public static final String soundcloudUrl = "http://api.soundcloud.com";
-	public static final String clientId = "0724aaed3681642b2c352cea90e79297";
-	public static final String clientSecret = "b18ec752d35fce1a99169a2120698bad";
-	public static final String redirectUriString = "djdrmr://soundcloud/callback";
+	public static final String SOUNDCLOUD_URL = "http://api.soundcloud.com";
+	public static final String CLIENT_ID = "0724aaed3681642b2c352cea90e79297";
+	public static final String CLIENT_SECRET = "b18ec752d35fce1a99169a2120698bad";
+	public static final String REDIRECT_URI_STRING = "djdrmr://soundcloud/callback";
 	
 	// static resource type values
 	public static int RESOURCE_TYPE_USER = 1;
@@ -50,12 +50,12 @@ public class SoundcloudResource {
 	public SoundcloudResource(String url) {
 		URI redirect = null;
 		try {
-			redirect = new URI(redirectUriString);
+			redirect = new URI(REDIRECT_URI_STRING);
 		} catch (URISyntaxException e) {
 			// invalid URI format
 			e.printStackTrace();
 		}
-		wrapper = new ApiWrapper(clientId, clientSecret, redirect, null);
+		wrapper = new ApiWrapper(CLIENT_ID, CLIENT_SECRET, redirect, null);
 		this.resourceUrl = url;
 		hasData = false;
 		if (resourceUrl != null) {
