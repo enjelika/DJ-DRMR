@@ -1,13 +1,16 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
+import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONException;
-//import org.json.JSONObject;
-
-
-
-import edu.uco.sdd.spring15.dj_drmr.MediaPlayerService.MediaPlayerBinder;
+import org.json.JSONObject;
+import edu.uco.sdd.spring15.dj_drmr.R;
+import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment;
 import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment.TrackResultsListener;
+import edu.uco.sdd.spring15.dj_drmr.stream.IMediaPlayerServiceClient;
+import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService;
+import edu.uco.sdd.spring15.dj_drmr.stream.SoundcloudResource;
+import edu.uco.sdd.spring15.dj_drmr.stream.StateMediaPlayer;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -33,11 +36,15 @@ import android.widget.ToggleButton;
 public class BrowseActivity extends Activity implements IMediaPlayerServiceClient, TrackResultsListener 
 {
 	
-	private StateMediaPlayer mp;
+	private StateMediaPlayer mp = null;
 	private MediaPlayerService mService;
+	private SoundcloudResource resource = null;
+	private ArrayList<SoundcloudResource> resourceList;
 	private boolean bound;
 	private Resources res;
 	private String genres[];
+	
+	private ToggleButton btnPlayPause;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +76,7 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
             Log.d("MainActivity","service connected");
  
             //bound with Service. get Service instance
-            MediaPlayerBinder binder = (MediaPlayerBinder) serviceBinder;
+            MediaPlayerService.MediaPlayerBinder binder = (MediaPlayerService.MediaPlayerBinder) serviceBinder;
             mService = binder.getService();
  
             //send this instance to the service, so it can make callbacks on this instance as a client
@@ -77,22 +84,9 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
             bound = true;
  
             // TODO: update the UI...?
-	            //Set play/pause button to reflect state of the service's contained player
-	            final ToggleButton playPauseButton = (ToggleButton) findViewById(R.id.btnPlayPause);
-	            playPauseButton.setChecked(mService.getMediaPlayer().isPlaying());
- 
-//	            //Set station Picker to show currently set stream station
-//	            Spinner stationPicker = (Spinner) findViewById(R.id.stationPicker);
-//	            if(mService.getMediaPlayer() != null && mService.getMediaPlayer().getStreamStation() != null) {
-//	                for (int i = 0; i < CONSTANTS.STATIONS.length; i++) {
-//	                    if (mService.getMediaPlayer().getStreamStation().equals(CONSTANTS.STATIONS[i])) {
-//	                        stationPicker.setSelection(i);
-//	                        mSelectedStream = (StreamStation) stationPicker.getItemAtPosition(i);
-//	                    }
-//	 
-//	                }
-//	            }
- 
+            //Set play/pause button to reflect state of the service's contained player
+            // deleted a "final" declaration of the togglebutton here
+            btnPlayPause.setChecked(mService.getMediaPlayer().isPlaying()); 
         }
  
         @Override
@@ -102,17 +96,18 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
     };
     
     private void initializeButtons() {
+    	if (bound) {
+    		mp = mService.getMediaPlayer();
+    	}
         // PLAY/PAUSE BUTTON
-    	final ToggleButton playPauseButton = (ToggleButton) findViewById(R.id.btnPlayPause);
-        playPauseButton.setOnClickListener(new OnClickListener() {
+    	btnPlayPause = (ToggleButton) findViewById(R.id.btnPlayPause);
+        btnPlayPause.setOnClickListener(new OnClickListener() {
  
             @Override
             public void onClick(View v) {
-                if (bound) {
-                    mp = mService.getMediaPlayer();
- 
+                if (bound && mp != null) {
                     //pressed pause ->pause
-                    if (!playPauseButton.isChecked()) {
+                    if (!btnPlayPause.isChecked()) {
  
                         if (mp.isStarted()) {
                             mService.pauseMediaPlayer();
@@ -121,23 +116,23 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
                     }
  
                     //pressed play
-                    else if (playPauseButton.isChecked()) {
-                        // STOPPED, CREATED, EMPTY, -> initialize
-                        if (mp.isStopped()
-                                || mp.isCreated()
-                                || mp.isEmpty())
-                        {
-                            mService.initializeMediaPlayer(
-                            		"http://www.songspw.com/fileDownload/Songs/128/23718.mp3");
-                        }
- 
-                        //prepared, paused -> resume play
-                        else if (mp.isPrepared()
-                                || mp.isPaused())
-                        {
-                            mService.startMediaPlayer();
-                        }
- 
+                    else if (btnPlayPause.isChecked()) {
+                    	if (resource != null) {
+	                        // STOPPED, CREATED, EMPTY, -> initialize
+	                        if (mp.isStopped() || mp.isCreated() || mp.isEmpty())
+	                        {
+	                            mService.initializeMediaPlayer(resource);
+	                        }
+	 
+	                        //prepared, paused -> resume play
+	                        else if (mp.isPrepared()
+	                                || mp.isPaused())
+	                        {
+	                            mService.startMediaPlayer();
+	                        }
+                    	} else {
+                    		Log.e("BrowseActivity", "tried to play, resource is null");
+                    	}
                     }
                 }
             }
@@ -156,27 +151,42 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				String genre = (String) parent.getItemAtPosition(position);
-				System.out.println("genre = " + genre);
-				SoundcloudResource resource = new SoundcloudResource(
-							"/tracks?client_id=" + SoundcloudResource.clientId + "&genres=" + genre);
-				while (!resource.hasData()) { /* wait for data */ }
-				String result = resource.getSoundcloudData();
+				Log.d("BrowseActivity", "genre = " + genre + "!!!");
+				SoundcloudResource tracklist = new SoundcloudResource(
+							"/tracks?client_id=" + SoundcloudResource.CLIENT_ID + "&genres=" + genre);
+				tracklist.setType(SoundcloudResource.RESOURCE_TYPE_QUERY_RESULT); // a list of tracks
+				while (!tracklist.hasData()) { /* wait for data */ }
+				String result = tracklist.getSoundcloudData();
+				Log.d("BrowseActivity", "onItemClick got soundcloud track list");
 				try {
 					JSONArray json = new JSONArray(result);
-					String tracks[] = new String[json.length()];
+					resourceList = new ArrayList<SoundcloudResource>();
 					for (int i = 0; i < json.length(); i++) {
-						tracks[i] = json.getJSONObject(i).getString("title").toString();
-						System.out.println(tracks[i]);
+						JSONObject object = json.getJSONObject(i);
+						String title = object.getString("title").toString();
+						String artist = object.getJSONObject("user").getString("username").toString();
+						System.out.println("got title and user");
+						String url = object.getString("uri").toString();
+						url = url.replace("http://api.soundcloud.com", "");
+						SoundcloudResource scr = new SoundcloudResource(url);
+						while (!scr.hasData()) { /* wait for data */ };
+						scr.setType(SoundcloudResource.RESOURCE_TYPE_TRACK);
+						scr.setTitle(title);
+						scr.setArtist(artist);
+						resourceList.add(scr);
 					}
+					// debug
+					Log.d("BrowseActivity", "resourceList == null? " + (resourceList==null)+"");
 					
 					//pass to fragment - Debra
 					TrackResultsFragment t = new TrackResultsFragment();
 					Bundle bundle = new Bundle();
-					bundle.putStringArray("results", tracks);
+					bundle.putParcelableArrayList("results", resourceList);
 					t.setArguments(bundle);
 					t.show(getFragmentManager(), result);
 					//lvTracks.setAdapter(new ArrayAdapter<String>(BrowseActivity.this, R.layout.listitem, tracks));
 				} catch (JSONException e) {
+					Log.e("BrowseActivity", "JSONException when parsing soundcloud data");
 					e.printStackTrace();
 				}
 			}
@@ -203,7 +213,6 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 
 	@Override
 	public void onInitializePlayerSuccess() {
-		final ToggleButton btnPlayPause = (ToggleButton) findViewById(R.id.btnPlayPause);
 		btnPlayPause.setChecked(true);		
 	}
 
@@ -230,6 +239,11 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 
 	@Override
 	public void onPickTrackClick(int trackIndex, DialogFragment dialog) {
-//		String genre = genres[trackIndex];
+		if (bound) {
+			Log.d("BrowseActivity", "onPickTrackClick");
+			resource = resourceList.get(trackIndex);
+			mService.initializeMediaPlayer(resource);
+			btnPlayPause.setChecked(true);
+		}
 	}
 }

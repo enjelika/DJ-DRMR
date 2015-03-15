@@ -1,5 +1,8 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
+import java.util.ArrayList;
+
+import edu.uco.sdd.spring15.dj_drmr.stream.SoundcloudResource;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,7 +12,7 @@ import android.os.Bundle;
 
 public class TrackResultsFragment extends DialogFragment{
 	
-	private String[] trackList;
+	private ArrayList<SoundcloudResource> trackList;
 
 	public interface TrackResultsListener {
 		public void onPickTrackClick(int trackIndex, DialogFragment dialog);
@@ -31,11 +34,19 @@ public class TrackResultsFragment extends DialogFragment{
 	@Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Bundle bundle = this.getArguments();
-		trackList = bundle.getStringArray("results");
+		
+		trackList = (ArrayList) bundle.getParcelableArrayList("results");
+		String[] titles = new String[trackList.size()];
+		
+		// get the track names for the track list
+		for (int i = 0; i < trackList.size(); i++) {
+			titles[i] = trackList.get(i).getTitle();
+		}
 		
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setItems(trackList, new DialogInterface.OnClickListener() {
-                   public void onClick(DialogInterface dialog, int choice) {
+        builder.setItems(titles, new DialogInterface.OnClickListener() {
+                   @Override
+				public void onClick(DialogInterface dialog, int choice) {
                 	   listener.onPickTrackClick(choice, TrackResultsFragment.this);
                }
         });

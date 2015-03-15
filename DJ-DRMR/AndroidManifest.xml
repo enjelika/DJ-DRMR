@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.uco.sdd.spring15.dj_drmr"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.1" >
 
     <uses-sdk
         android:minSdkVersion="16"
@@ -56,7 +56,7 @@
         </activity>
         
         <service
-            android:name=".MediaPlayerService"
+            android:name="edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService"
             android:enabled="true" />
 
     </application>

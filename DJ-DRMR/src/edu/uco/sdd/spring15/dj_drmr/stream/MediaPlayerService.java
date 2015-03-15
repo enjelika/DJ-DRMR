@@ -1,6 +1,5 @@
-package edu.uco.sdd.spring15.dj_drmr;
+package edu.uco.sdd.spring15.dj_drmr.stream;
 
-import edu.uco.sdd.spring15.dj_drmr.StateMediaPlayer.MPlayerStates;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -17,8 +16,9 @@ import android.os.IBinder;
 import android.util.Log;
 //import edu.uco.sdd.spring15.dj_drmr.BrowseActivity;
 import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain;
+import edu.uco.sdd.spring15.dj_drmr.stream.StateMediaPlayer.MPlayerStates;
 
-@SuppressWarnings("unused")
+
 public class MediaPlayerService extends Service implements OnBufferingUpdateListener, OnInfoListener, 
 																	OnPreparedListener, OnErrorListener {
 	
@@ -42,16 +42,20 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 		return mp;
 	}
 	
+	// initialize the media player given a soundcloud resource object
+	// TODO: use the resource data (title, author) to populate the media player ui component?
+	public void initializeMediaPlayer(SoundcloudResource resource) {
+		String url = resource.getResourceUrl();
+		Log.d("MediaPlayerService", "initializeMediPlayer with soundcloud resource");
+		initializeMediaPlayer(url);
+	}
+	
 	// initialize the media player given a url
-	// TODO: a method to initialize given a stream station object?
 	public void initializeMediaPlayer(String url) {
 		mp = new StateMediaPlayer();
 		mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		try {
 			mp.setDataSource(url);
-			SoundcloudResource soundcloud = new SoundcloudResource(
-					"/tracks?client_id=" + SoundcloudResource.CLIENT_ID + "&q=berlin&format=json&genres=techno");
-			String result = soundcloud.getSoundcloudData();
 		} catch (Exception e) {
 			Log.e("MediaPlayerService", "error setting data source");
 			mp.setState(MPlayerStates.ERROR);

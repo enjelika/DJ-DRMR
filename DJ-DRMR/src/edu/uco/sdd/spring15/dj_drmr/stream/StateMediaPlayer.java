@@ -1,4 +1,4 @@
-package edu.uco.sdd.spring15.dj_drmr;
+package edu.uco.sdd.spring15.dj_drmr.stream;
 
 import android.media.MediaPlayer;
 import android.util.Log;
