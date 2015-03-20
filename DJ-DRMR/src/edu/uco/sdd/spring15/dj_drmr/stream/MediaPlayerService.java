@@ -1,5 +1,7 @@
 package edu.uco.sdd.spring15.dj_drmr.stream;
 
+import java.util.ArrayList;
+
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -8,6 +10,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnPreparedListener;
@@ -20,11 +23,14 @@ import edu.uco.sdd.spring15.dj_drmr.stream.StateMediaPlayer.MPlayerStates;
 
 
 public class MediaPlayerService extends Service implements OnBufferingUpdateListener, OnInfoListener, 
-																	OnPreparedListener, OnErrorListener {
+																	OnPreparedListener, OnErrorListener,
+																	OnCompletionListener {
 	
 	private StateMediaPlayer mp = new StateMediaPlayer();
 	private IMediaPlayerServiceClient mClient;
 	private final Binder mBinder = new MediaPlayerBinder();
+	private ArrayList<SoundcloudResource> resourceList = null;
+	private int trackIndex = -1;
 	
 	public class MediaPlayerBinder extends Binder {
 		// returns the instance of this service for clients to connect and make calls to it
@@ -45,15 +51,30 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	// initialize the media player given a soundcloud resource object
 	// TODO: use the resource data (title, author) to populate the media player ui component?
 	public void initializeMediaPlayer(SoundcloudResource resource) {
+		Log.d("MediaPlayerService", "initializeMediaPlayer with soundcloud resource");
 		String url = resource.getResourceUrl();
-		Log.d("MediaPlayerService", "initializeMediPlayer with soundcloud resource");
 		initializeMediaPlayer(url);
+	}
+	
+	// initialize the media player given a list of soundcloud resource objects
+	// - when one track finishes, proceed to play the next one
+	public void initializeMediaPlayer(ArrayList<SoundcloudResource> resourceList, int trackIndex) {
+		Log.d("MediaPlayerService", "initializeMediaPlayer with resource list");
+		this.resourceList = resourceList;
+		this.trackIndex = trackIndex;
+		getNextTrack(trackIndex);
 	}
 	
 	// initialize the media player given a url
 	public void initializeMediaPlayer(String url) {
+		url = url.replace("https", "http");
+		url += "?client_id=" + SoundcloudResource.CLIENT_ID;
+		Log.d("MediaPlayerService", "initializeMediaPlayer with " + url);
+		if (mp.isPlaying()) mp.stop();
 		mp = new StateMediaPlayer();
-		mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+		mp.setAudioStreamType(MODE_WORLD_READABLE);
+		mp.setOnCompletionListener(this);
+		
 		try {
 			mp.setDataSource(url);
 		} catch (Exception e) {
@@ -64,6 +85,28 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 		mp.setOnInfoListener(this);
 		mp.setOnPreparedListener(this);
 		mp.prepareAsync();
+	}
+	
+	// initialize the media player with the track at index in the resourceList
+	private void getNextTrack(int index) {
+		Log.d("MediaPlayerService", "getNextTrack");
+		SoundcloudResource resource = resourceList.get(index);
+		resource.pullData();
+		while (!resource.hasData()) { /* wait for data */ }
+		String url = resource.getResourceUrl();
+		initializeMediaPlayer(url);
+	}
+	
+	@Override
+	public void onCompletion(MediaPlayer mp) {
+		if (resourceList == null) {
+			// only one resource was passed in - shut down mediaplayer
+			mp.release();
+		} else {
+			// play the next track in the resourceList
+			if (trackIndex++ >= resourceList.size()) trackIndex = 0;
+			getNextTrack(trackIndex);
+		}
 	}
 
 	@Override
@@ -101,6 +144,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
  
+        // TODO: make notification into a controller
         CharSequence contentTitle = "MediaPlayerService Is Playing";
         CharSequence contentText = "todo";
         notification.setLatestEventInfo(context, contentTitle,
@@ -136,5 +180,12 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	
 	public void setClient(IMediaPlayerServiceClient client) {
 		this.mClient = client;
+	}
+	
+	@Override
+	public void onDestroy() {
+		mp.stop();
+		mp.release();
+		super.onDestroy();
 	}
 }

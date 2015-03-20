@@ -2,11 +2,12 @@ package edu.uco.sdd.spring15.dj_drmr;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import edu.uco.sdd.spring15.dj_drmr.MediaPlayerService.MediaPlayerBinder;
 import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment.TrackResultsListener;
 import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogListener;
 import android.app.ActionBar;
@@ -52,6 +53,11 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.ToggleButton;
 import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment;
 import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogListener;
+import edu.uco.sdd.spring15.dj_drmr.stream.IMediaPlayerServiceClient;
+import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService;
+import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService.MediaPlayerBinder;
+import edu.uco.sdd.spring15.dj_drmr.stream.SoundcloudResource;
+import edu.uco.sdd.spring15.dj_drmr.stream.StateMediaPlayer;
 
 public class DjdrmrMain extends Activity implements 
 NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, RecordDialogListener {
@@ -99,7 +105,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		case 1: fragmentManager
 					.beginTransaction()
 					.replace(R.id.container,
-							BrowseFragment.newInstance(position + 1)).commit();
+							BrowseFragment.newInstance(position + 1), "BrowseFragment").commit();
 				break;
 		case 2: fragmentManager
 					.beginTransaction()
@@ -275,13 +281,15 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	
 	public static class BrowseFragment extends Fragment implements IMediaPlayerServiceClient, TrackResultsListener, OnClickListener {
 		
-		private StateMediaPlayer mp;
+		private StateMediaPlayer mp = null;
 		private MediaPlayerService mService;
+		private SoundcloudResource resource = null;
+		private ArrayList<SoundcloudResource> resourceList;
 		private boolean bound;
 		private Resources res;
 		private String genres[];
 		private ToggleButton btnPlayPause;
-        ListView lvGenres;
+        private ListView lvGenres;
 		
 		/**
 		 * The fragment argument representing the section number for this
@@ -345,8 +353,8 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	            bound = true;
 	 
 	            // TODO: update the UI...?
-		            //Set play/pause button to reflect state of the service's contained player
-		            btnPlayPause.setChecked(mService.getMediaPlayer().isPlaying());
+		        //Set play/pause button to reflect state of the service's contained player
+	            btnPlayPause.setChecked(mService.getMediaPlayer().isPlaying());
 	 
 //		            //Set station Picker to show currently set stream station
 //		            Spinner stationPicker = (Spinner) findViewById(R.id.stationPicker);
@@ -383,27 +391,42 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				public void onItemClick(AdapterView<?> parent, View view,
 						int position, long id) {
 					String genre = (String) parent.getItemAtPosition(position);
-					System.out.println("genre = " + genre);
-					SoundcloudResource resource = new SoundcloudResource(
+					Log.d("BrowseFragment", "genre = " + genre);
+					SoundcloudResource tracklist = new SoundcloudResource(
 								"/tracks?client_id=" + SoundcloudResource.CLIENT_ID + "&genres=" + genre);
-					while (!resource.hasData()) { /* wait for data */ }
-					String result = resource.getSoundcloudData();
+					tracklist.setType(SoundcloudResource.RESOURCE_TYPE_QUERY_RESULT); // a list of tracks
+					tracklist.pullData(); // get result from soundcloud
+					while (!tracklist.hasData()) { /* wait for data */ }
+					String result = tracklist.getSoundcloudData();
 					try {
 						JSONArray json = new JSONArray(result);
-						String tracks[] = new String[json.length()];
+						resourceList = new ArrayList<SoundcloudResource>();
 						for (int i = 0; i < json.length(); i++) {
-							tracks[i] = json.getJSONObject(i).getString("title").toString();
-							System.out.println(tracks[i]);
+							JSONObject object = json.getJSONObject(i);
+							if (object.getBoolean("streamable")) {
+								// only parse streamable tracks
+								String title = object.getString("title").toString();
+								String artist = object.getJSONObject("user").getString("username").toString();
+								String url = object.getString("stream_url").toString();
+								SoundcloudResource scr = new SoundcloudResource(url);
+								scr.setType(SoundcloudResource.RESOURCE_TYPE_TRACK);
+								scr.setTitle(title);
+								scr.setArtist(artist);
+								resourceList.add(scr);
+							}
 						}
+						// debug
+//						Log.d("BrowseActivity", "resourceList == null? " + (resourceList==null)+"");
 						
 						//pass to fragment - Debra
 						TrackResultsFragment t = new TrackResultsFragment();
 						Bundle bundle = new Bundle();
-						bundle.putStringArray("results", tracks);
+						bundle.putParcelableArrayList("results", resourceList);
 						t.setArguments(bundle);
 						t.show(getFragmentManager(), result);
 						//lvTracks.setAdapter(new ArrayAdapter<String>(BrowseActivity.this, R.layout.listitem, tracks));
 					} catch (JSONException e) {
+						Log.e("BrowseFragment", "JSONException when parsing soundcloud data");
 						e.printStackTrace();
 					}
 				}
@@ -435,8 +458,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 		@Override
 		public void onError() {
-			// TODO UI stuff
-			
+			Log.e("BrowseFragment", "onError called by service");
 		}
 		
 		public void shutdownActivity() {
@@ -456,7 +478,14 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 		@Override
 		public void onPickTrackClick(int trackIndex, DialogFragment dialog) {
-//			String genre = genres[trackIndex];
+			if (bound) {
+				Log.d("BrowseActivity", "onPickTrackClick");
+				resource = resourceList.get(trackIndex);
+//				resource.pullData();
+//				while (!resource.hasData()) { /* wait for data */ }
+				mService.initializeMediaPlayer(resourceList, trackIndex);
+				btnPlayPause.setChecked(true);
+			}
 		}
 		
 		@Override
@@ -489,8 +518,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	                            || mp.isCreated()
 	                            || mp.isEmpty())
 	                    {
-	                        mService.initializeMediaPlayer(
-	                        		"http://www.songspw.com/fileDownload/Songs/128/23718.mp3");
+	                        mService.initializeMediaPlayer(resource);
 	                    }
 	
 	                    //prepared, paused -> resume play
@@ -820,8 +848,9 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 	@Override
 	public void onPickTrackClick(int trackIndex, DialogFragment dialog) {
-		// TODO Auto-generated method stub
-		
+		BrowseFragment mBrowseFragment = (BrowseFragment) getFragmentManager()
+				.findFragmentByTag("BrowseFragment");
+		mBrowseFragment.onPickTrackClick(trackIndex, dialog);
 	}
 
 	@Override

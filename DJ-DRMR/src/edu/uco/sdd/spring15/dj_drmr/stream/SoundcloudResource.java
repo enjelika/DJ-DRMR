@@ -64,9 +64,6 @@ public class SoundcloudResource implements Parcelable {
 		wrapper = new ApiWrapper(CLIENT_ID, CLIENT_SECRET, redirect, null);
 		this.resourceUrl = url;
 		hasData = false;
-		if (resourceUrl != null) {
-			pullData();
-		}
 	}
 	
 	public int getType() {
@@ -98,11 +95,10 @@ public class SoundcloudResource implements Parcelable {
 	}
 	
 	// appends the given end of URL to the stored soundcloud URL
-	// @param endOfUrl format = "/tracks?client_id={YOURCLIENTID}&q=berlin&format=json&genres=techno"
+	// resourceUrl format example: "/tracks?client_id={YOURCLIENTID}&q=berlin&format=json&genres=techno"
 	// 								to search for techno tracks with keyword "berlin" in json format
 	public void setResourceUrl(String resourceUrl) {
 		this.resourceUrl = resourceUrl;
-		pullData();
 	}
 	
 	public String getSoundcloudData() {
@@ -130,7 +126,8 @@ public class SoundcloudResource implements Parcelable {
 			try {
 				HttpResponse response = wrapper.get(Request.to(resourceUrl));
 				/* below is from soundcloud api example */
-				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK ||
+						response.getStatusLine().getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY /* 302 -expected */) {
 					soundcloudData = Http.formatJSON(Http.getString(response));
 //					System.out.println(soundcloudData);
 					hasData = true;
