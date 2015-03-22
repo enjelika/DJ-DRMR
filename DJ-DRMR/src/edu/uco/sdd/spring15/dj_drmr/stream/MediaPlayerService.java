@@ -2,6 +2,7 @@ package edu.uco.sdd.spring15.dj_drmr.stream;
 
 import java.util.ArrayList;
 
+import android.R;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -31,6 +32,8 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	private final Binder mBinder = new MediaPlayerBinder();
 	private ArrayList<SoundcloudResource> resourceList = null;
 	private int trackIndex = -1;
+	
+	private boolean paused=false;
 	
 	public class MediaPlayerBinder extends Binder {
 		// returns the instance of this service for clients to connect and make calls to it
@@ -104,8 +107,8 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 			mp.release();
 		} else {
 			// play the next track in the resourceList
-			if (trackIndex++ >= resourceList.size()) trackIndex = 0;
-			getNextTrack(trackIndex);
+			mp.reset(); // TODO: ok?
+			playNext();
 		}
 	}
 
@@ -134,21 +137,22 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	
 	@SuppressWarnings("deprecation")
 	public void startMediaPlayer() {
-		Context context = getApplicationContext();
 		
 		//set to foreground
-		// TODO: fix deprecated method calls
-        Notification notification = new Notification(android.R.drawable.ic_media_play, "MediaPlayerService",
-                System.currentTimeMillis());
         Intent notificationIntent = new Intent(this, DjdrmrMain.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentIntent(pendingIntent)
+        		.setSmallIcon(R.drawable.btn_radio)
+        		.setTicker("todo title here")
+        		.setOngoing(true)
+        		.setContentTitle("playing")
+        		.setContentText("todo title here");
+        Notification notification = builder.build();
  
         // TODO: make notification into a controller
-        CharSequence contentTitle = "MediaPlayerService Is Playing";
-        CharSequence contentText = "todo";
-        notification.setLatestEventInfo(context, contentTitle,
-                contentText, pendingIntent);
         startForeground(1, notification);
  
         Log.d("MediaPlayerService","startMediaPlayer() called");
@@ -159,6 +163,11 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 		Log.d("MediaPlayerService","pauseMediaPlayer() called");
         mp.pause();
         stopForeground(true);
+        paused=true;
+	}
+	
+	public boolean isPaused() {
+		return this.paused;
 	}
 	
 	public void stopMediaPlayer() {
@@ -170,6 +179,32 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	public void resetMediaPlayer() {
 		stopForeground(true);
         mp.reset();
+	}
+	
+	public int getPosn(){
+	  return mp.getCurrentPosition();
+	}
+	 
+	public int getDur(){
+	  return mp.getDuration();
+	}
+	 
+	public boolean isPlaying(){
+	  return mp.isPlaying();
+	}
+	 
+	public void seek(int posn){
+	  mp.seekTo(posn);
+	}
+	
+	public void playPrev() {
+		if (trackIndex-- < 0) trackIndex = resourceList.size()-1;
+		getNextTrack(trackIndex);
+	}
+	
+	public void playNext() {
+		if (trackIndex++ >= resourceList.size()) trackIndex = 0;
+		getNextTrack(trackIndex);
 	}
 	
 	@Override
@@ -186,6 +221,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	public void onDestroy() {
 		mp.stop();
 		mp.release();
+		stopForeground(true);
 		super.onDestroy();
 	}
 }

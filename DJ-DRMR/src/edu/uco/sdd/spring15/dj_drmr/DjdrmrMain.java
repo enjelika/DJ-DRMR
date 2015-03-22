@@ -48,6 +48,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.MediaController.MediaPlayerControl;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.ToggleButton;
@@ -56,6 +57,7 @@ import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogList
 import edu.uco.sdd.spring15.dj_drmr.stream.IMediaPlayerServiceClient;
 import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService;
 import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService.MediaPlayerBinder;
+import edu.uco.sdd.spring15.dj_drmr.stream.MusicController;
 import edu.uco.sdd.spring15.dj_drmr.stream.SoundcloudResource;
 import edu.uco.sdd.spring15.dj_drmr.stream.StateMediaPlayer;
 
@@ -279,7 +281,8 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		}
 	}
 	
-	public static class BrowseFragment extends Fragment implements IMediaPlayerServiceClient, TrackResultsListener, OnClickListener {
+	public static class BrowseFragment extends Fragment implements IMediaPlayerServiceClient, TrackResultsListener, 
+																	OnClickListener, MediaPlayerControl {
 		
 		private StateMediaPlayer mp = null;
 		private MediaPlayerService mService;
@@ -290,6 +293,8 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		private String genres[];
 		private ToggleButton btnPlayPause;
         private ListView lvGenres;
+        private MusicController mController;
+        private boolean playbackPaused;
 		
 		/**
 		 * The fragment argument representing the section number for this
@@ -326,6 +331,20 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			
 			return rootView;
 		}
+		
+		@Override
+		public void onResume() {
+			super.onResume();
+			if (mService.isPaused()) {
+				setController();
+			}
+		}
+		
+		@Override
+		public void onStop() {
+			mController.hide();
+			super.onStop();
+		}
 
 		private void bindToService() {
 			Intent intent = new Intent(getActivity(), MediaPlayerService.class);
@@ -354,20 +373,9 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	 
 	            // TODO: update the UI...?
 		        //Set play/pause button to reflect state of the service's contained player
-	            btnPlayPause.setChecked(mService.getMediaPlayer().isPlaying());
-	 
-//		            //Set station Picker to show currently set stream station
-//		            Spinner stationPicker = (Spinner) findViewById(R.id.stationPicker);
-//		            if(mService.getMediaPlayer() != null && mService.getMediaPlayer().getStreamStation() != null) {
-//		                for (int i = 0; i < CONSTANTS.STATIONS.length; i++) {
-//		                    if (mService.getMediaPlayer().getStreamStation().equals(CONSTANTS.STATIONS[i])) {
-//		                        stationPicker.setSelection(i);
-//		                        mSelectedStream = (StreamStation) stationPicker.getItemAtPosition(i);
-//		                    }
-//		 
-//		                }
-//		            }
-	 
+	            btnPlayPause.setChecked(mService.getMediaPlayer().isPlaying());	
+	            // set the mediacontroller
+	            setController();
 	        }
 	 
 	        @Override
@@ -530,8 +538,98 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	
 	                }
 	            }
-			break;
+				break;
 			}
+		}
+
+		private void setController() {
+			// set up MusicController
+			mController = new MusicController(getActivity());
+			mController.setPrevNextListeners(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mService.playNext();
+					if (playbackPaused) {
+						setController();
+						playbackPaused = false;
+					}
+					mController.show(0);
+				}
+			}, new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					mService.playPrev();
+					if (playbackPaused) {
+						setController();
+						playbackPaused = false;
+					}
+					mController.show(0);
+				}
+			});
+			mController.setMediaPlayer(this);
+			mController.setAnchorView(getView());
+			mController.setEnabled(true);
+		}
+		
+		@Override
+		public void start() {
+			mService.startMediaPlayer();
+		}
+
+		@Override
+		public void pause() {
+			mService.pauseMediaPlayer();
+			playbackPaused = true;
+		}
+
+		@Override
+		public int getDuration() {
+			if(mService != null && bound && mService.isPlaying()) {
+			    return mService.getDur();
+			}
+			else return 0;
+		}
+
+		@Override
+		public int getCurrentPosition() {
+			if(mService!=null && bound && mService.isPlaying()) {
+			    return mService.getPosn();
+			}
+			else return 0;
+		}
+
+		@Override
+		public void seekTo(int pos) {
+			mService.seek(pos);
+		}
+
+		@Override
+		public boolean isPlaying() {
+			if(mService!=null && bound) {
+			    return mService.isPlaying();
+			}
+			return false;
+		}
+
+		@Override
+		public int getBufferPercentage() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public boolean canPause() {
+			return true;
+		}
+
+		@Override
+		public boolean canSeekBackward() {
+			return true;
+		}
+
+		@Override
+		public boolean canSeekForward() {
+			return true;
 		}
 	}
 	
