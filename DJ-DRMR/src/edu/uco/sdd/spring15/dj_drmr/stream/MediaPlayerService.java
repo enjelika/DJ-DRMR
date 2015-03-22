@@ -6,9 +6,7 @@ import android.R;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -18,7 +16,6 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-//import edu.uco.sdd.spring15.dj_drmr.BrowseActivity;
 import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain;
 import edu.uco.sdd.spring15.dj_drmr.stream.StateMediaPlayer.MPlayerStates;
 

@@ -12,5 +12,6 @@ public class MusicController extends MediaController {
 	@Override
 	public void hide() {
 		// TODO: nothing here (keeps the controller from hiding automatically)
+//		super.hide();
 	}
 }

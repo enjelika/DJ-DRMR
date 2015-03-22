@@ -335,7 +335,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		@Override
 		public void onResume() {
 			super.onResume();
-			if (mService.isPaused()) {
+			if (bound && mService.isPaused()) {
 				setController();
 			}
 		}
@@ -387,6 +387,8 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	    private void initializeButtons() {
 	        // PLAY/PAUSE BUTTON
 	        btnPlayPause.setOnClickListener(this);
+	        
+//	        setController();
 	        
 	        final ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem, genres);
 	        lvGenres.setAdapter(genreAdapter);
@@ -544,6 +546,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 		private void setController() {
 			// set up MusicController
+			Log.d("BrowseFragment", "setController");
 			mController = new MusicController(getActivity());
 			mController.setPrevNextListeners(new OnClickListener() {
 				@Override
@@ -569,6 +572,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			mController.setMediaPlayer(this);
 			mController.setAnchorView(getView());
 			mController.setEnabled(true);
+			mController.show(0);
 		}
 		
 		@Override
