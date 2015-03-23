@@ -1,6 +1,9 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
 import java.io.File;
+import java.io.IOException;
+
+import org.apache.http.HttpResponse;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -22,10 +25,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.soundcloud.api.ApiWrapper;
+import com.soundcloud.api.Endpoints;
+import com.soundcloud.api.Params;
+import com.soundcloud.api.Request;
+import com.soundcloud.api.Token;
+
+import edu.uco.sdd.spring15.dj_drmr.stream.SoundcloudResource;
+
 public class UploadActivity extends Activity {
-	private Button btUpload;
+	private Button btChoose;
 	private TextView txtFileChose;
 	private EditText editTextTags;
+	private Button btUpload;
+	private Song song;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +46,30 @@ public class UploadActivity extends Activity {
 		setContentView(R.layout.activity_upload);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
-		this.btUpload = (Button) findViewById(R.id.btnUpload);
+		this.btChoose = (Button) findViewById(R.id.btnUpload);
 		this.txtFileChose = (TextView) findViewById(R.id.txtFileChose);
 		this.editTextTags = (EditText) findViewById(R.id.editTextTags);
+		this.btUpload = (Button) findViewById(R.id.uploadBtn);
 		
 		this.btUpload.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				song.setTags(editTextTags.getText().toString());
+                try {
+                	ApiWrapper wrapper = new ApiWrapper(SoundcloudResource.CLIENT_ID, SoundcloudResource.CLIENT_SECRET,  null,  null);
+					Token token = wrapper.login("renan.kub@gmail.com", "soundcloud");
+					song.getSong().setReadable(true, false);
+					HttpResponse resp = wrapper.post(Request.to(Endpoints.TRACKS)
+		            .add(Params.Track.TITLE, "test.mp3")
+		            .add(Params.Track.TAG_LIST, "test")
+		            .withFile(Params.Track.ASSET_DATA, song.getSong()));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		this.btChoose.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				 Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -85,15 +117,7 @@ public class UploadActivity extends Activity {
 	        Uri uri = data.getData();
 	        String path = uri.getPath();
 	        File input = new File(path);
-	        
-//	        File sdCardRoot = Environment.getExternalStorageDirectory();
-//	        File yourDir = new File(sdCardRoot, path);
-//	        for (File f : yourDir.listFiles()) {
-//	            if (f.isFile()){
-//	            	System.out.println(f.getName());
-//	            }
-//	        }
-	        
+	        this.song = new Song(input);
 	        txtFileChose.setText(input.getName());
 	    }           
 	    super.onActivityResult(requestCode, resultCode, data);
@@ -101,7 +125,6 @@ public class UploadActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.upload, menu);
 		return true;
 	}
