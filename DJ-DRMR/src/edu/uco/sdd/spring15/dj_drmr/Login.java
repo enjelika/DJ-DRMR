@@ -43,6 +43,9 @@ public class Login extends Activity implements OnClickListener{
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 	
+    Boolean isInternetPresent = false;
+	CheckConnection cd;
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -61,6 +64,7 @@ public class Login extends Activity implements OnClickListener{
 		//register listeners
 		mSubmit.setOnClickListener(this);
 		mRegister.setOnClickListener(this);
+		cd = new CheckConnection(getApplicationContext());
 		
 	}
 
@@ -69,13 +73,15 @@ public class Login extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.login:
-				new AttemptLogin().execute();
+			isInternetPresent = cd.isConnectingToInternet();
+			if(!isInternetPresent){
+				Toast.makeText(getApplicationContext(), "You don't have internet connection. Please connect to the internet", Toast.LENGTH_SHORT).show();
+			}else new AttemptLogin().execute();
 			break;
 		case R.id.register:
 				Intent i = new Intent(this, Register.class);
 				startActivity(i);
 			break;
-
 		default:
 			break;
 		}

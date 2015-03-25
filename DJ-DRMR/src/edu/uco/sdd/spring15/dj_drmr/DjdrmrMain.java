@@ -173,10 +173,21 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
+		switch(id){
+			case R.id.action_settings:
+				return true;
+			case R.id.action_logout:
+				Intent i = new Intent(this, Login.class);
+				startActivity(i);
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+		/*
 		if (id == R.id.action_settings) {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+		*/
 	}
 	
 	/**
