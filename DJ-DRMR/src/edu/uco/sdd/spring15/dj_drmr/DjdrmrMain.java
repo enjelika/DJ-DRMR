@@ -4,9 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.http.HttpResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.soundcloud.api.ApiWrapper;
+import com.soundcloud.api.Endpoints;
+import com.soundcloud.api.Params;
+import com.soundcloud.api.Request;
+import com.soundcloud.api.Token;
 
 import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment.TrackResultsListener;
 import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogListener;
@@ -48,6 +55,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 import android.widget.MediaController.MediaPlayerControl;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -835,9 +843,11 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 	public static class UploadFragment extends Fragment {
 		
-		private Button btUpload;
+		private Button btChoose;
 		private TextView txtFileChose;
 		private EditText editTextTags;
+		private Button btUpload;
+		private Song song;
 		
 		/**
 		 * The fragment argument representing the section number for this
@@ -865,11 +875,37 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			View rootView = inflater.inflate(R.layout.activity_upload, container,
 					false);
 			
-			this.btUpload = (Button) rootView.findViewById(R.id.btnUpload);
+			this.btChoose = (Button) rootView.findViewById(R.id.btnUpload);
 			this.txtFileChose = (TextView) rootView.findViewById(R.id.txtFileChose);
 			this.editTextTags = (EditText) rootView.findViewById(R.id.editTextTags);
+			this.btUpload = (Button) rootView.findViewById(R.id.uploadBtn);
 			
 			this.btUpload.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					song.setTags(editTextTags.getText().toString());
+	                	new Thread(new Runnable() {
+		                	public void run() {
+			                	try {
+			                		ApiWrapper wrapper = new ApiWrapper(SoundcloudResource.CLIENT_ID, SoundcloudResource.CLIENT_SECRET,  null,  null);
+									Token token = wrapper.login("renan.kub@gmail.com", "soundcloud");
+									song.getSong().setReadable(true, false);
+									HttpResponse resp = wrapper.post(Request.to(Endpoints.TRACKS)
+						            .add(Params.Track.TITLE, "test.mp3")
+						            .add(Params.Track.TAG_LIST, "test")
+						            .withFile(Params.Track.ASSET_DATA, song.getSong()));
+									
+			                		 } catch (IOException e) {
+			     						e.printStackTrace();
+			     					}
+			                	}
+	                	 }).start();
+    					editTextTags.setText("");
+    					txtFileChose.setText("Choose File");
+				}
+			});
+			
+			this.btChoose.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					 Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -914,20 +950,12 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		}
 
 		public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		       
-		    if (resultCode == Activity.RESULT_OK) {  
+			
+			if (resultCode == Activity.RESULT_OK) {  
 		        Uri uri = data.getData();
 		        String path = uri.getPath();
 		        File input = new File(path);
-		        
-//		        File sdCardRoot = Environment.getExternalStorageDirectory();
-//		        File yourDir = new File(sdCardRoot, path);
-//		        for (File f : yourDir.listFiles()) {
-//		            if (f.isFile()){
-//		            	System.out.println(f.getName());
-//		            }
-//		        }
-		        
+		        this.song = new Song(input);
 		        txtFileChose.setText(input.getName());
 		    }           
 		    super.onActivityResult(requestCode, resultCode, data);

@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.soundcloud.api.ApiWrapper;
 import com.soundcloud.api.Endpoints;
@@ -55,6 +56,7 @@ public class UploadActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				song.setTags(editTextTags.getText().toString());
+				
                 try {
                 	ApiWrapper wrapper = new ApiWrapper(SoundcloudResource.CLIENT_ID, SoundcloudResource.CLIENT_SECRET,  null,  null);
 					Token token = wrapper.login("renan.kub@gmail.com", "soundcloud");
@@ -63,8 +65,15 @@ public class UploadActivity extends Activity {
 		            .add(Params.Track.TITLE, "test.mp3")
 		            .add(Params.Track.TAG_LIST, "test")
 		            .withFile(Params.Track.ASSET_DATA, song.getSong()));
+					
+					Toast.makeText(getApplicationContext(), "Uploading", Toast.LENGTH_SHORT).show();
+					
+					
 				} catch (IOException e) {
 					e.printStackTrace();
+				} finally {
+					editTextTags.setText("");
+					txtFileChose.setText("Choose File");
 				}
 			}
 		});
