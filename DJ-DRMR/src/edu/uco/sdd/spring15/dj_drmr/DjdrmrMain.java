@@ -1,5 +1,6 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -36,7 +38,9 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.inputmethod.EditorInfo;
@@ -61,7 +65,7 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.ToggleButton;
 import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment;
-import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogListener;
+import edu.uco.sdd.spring15.dj_drmr.record.RecordMp3;
 import edu.uco.sdd.spring15.dj_drmr.stream.IMediaPlayerServiceClient;
 import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService;
 import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService.MediaPlayerBinder;
@@ -70,7 +74,7 @@ import edu.uco.sdd.spring15.dj_drmr.stream.SoundcloudResource;
 import edu.uco.sdd.spring15.dj_drmr.stream.StateMediaPlayer;
 
 public class DjdrmrMain extends Activity implements 
-NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, RecordDialogListener {
+NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, RecordDialogListener{
 
 
 	/**
@@ -84,6 +88,10 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
+	
+	private static String recordPath = Environment.getExternalStorageDirectory() + "/test.mp3";
+	//MP3
+	private static RecordMp3 mRecordMp3;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -656,36 +664,18 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		}
 	}
 	
-	public static class RecordFragment extends Fragment implements RecordDialogListener {
+	public static class RecordFragment extends Fragment implements RecordDialogListener{
 		
 		private static final String TAG = RecordFragment.class.getSimpleName();
 
 		// Buttons
 		private Button btnRecord;
-		private Button btnPlay;
-		//private Button btnSave;
+		private Button btnStop;
 		
-		private boolean isRecording;
-		private MediaRecorder mRecorder;
-		
-		// Constant values for MediaRecorder
-		private static final int SAMPLEING_RATE = 44100;
-		private static final int BIT_RATE = 96000;
-		
-		// Hard directory to save file to
-		private static final File FILE_PATH = new File(
-				Environment.getExternalStorageDirectory(),
-				"Android/data/edu.uco.sdd.spring15.dj_drmr");
-		private static final File FILE_RECORDING = new File(FILE_PATH, "demo.mp4");
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		private static final String ARG_SECTION_NUMBER = "section_number";
 
-		/**
-		 * Returns a new instance of this fragment for the given section number.
-		 */
+		
+		private static final String ARG_SECTION_NUMBER = "section_number";
+		
 		public static RecordFragment newInstance(int sectionNumber) {
 			RecordFragment fragment = new RecordFragment();
 			Bundle args = new Bundle();
@@ -696,149 +686,56 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 		public RecordFragment() {
 		}
-
-		/**
-		 * (1) Handle the record/stop button
-		 * (2) Handle the play/stop button
-		 */
+		
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.record_activity, container,
 					false);
-			
-			btnRecord = (Button) rootView.findViewById(R.id.btn_record);
-		    btnPlay = (Button) rootView.findViewById(R.id.btn_play);
-		    //btnSave = (Button) findViewById(R.id.btn_save);
+		    btnRecord = (Button) rootView.findViewById(R.id.btn_record);
+		    btnStop = (Button) rootView.findViewById(R.id.btn_stop);
 		    
-//	 		Check the Storage availability
-		    if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-		    	if (!FILE_PATH.mkdir()) {
-		    		Log.d(TAG, "Could not create" + FILE_PATH);
-		    	} else {
-		    		Log.d(TAG, "External storage is required");
-		    		getActivity().finish();
-		    	}
-		    }
 
-		    
-//			(1)	    
 		    btnRecord.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
-					if (!isRecording) {
-						// Record
-//						isRecording = true;
-//						mRecorder = getRecorder(FILE_RECORDING);
-//						mRecorder.start();
-//						btnRecord.setText(R.string.record_stop);	
-						DialogFragment newFragment = new RecordDialogFragment();
-						newFragment.show(getFragmentManager(), "meta");
-					} else {
-						// Stop
-						Log.d(TAG, "Recording Stopped");
-						mRecorder.stop();
-						mRecorder.reset();
-						mRecorder.release();
-						mRecorder = null;
-						isRecording = false;
-						
-						btnRecord.setText(R.string.record_record);
-					}
+					Log.d(TAG, "Start button clicked");
+//					mRecordMp3.start();
+					DialogFragment newFragment = new RecordDialogFragment();
+					newFragment.show(getFragmentManager(), "id3");
 				}
 			});
 		    
-//			(2)
-		    btnPlay.setOnClickListener(new OnClickListener() {
+			btnStop.setOnClickListener(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
-					btnPlay.setEnabled(false);
-					btnRecord.setEnabled(false);
-					playRecorded(new MediaPlayer.OnCompletionListener() {
-						@Override
-						public void onCompletion(MediaPlayer mp) {
-							btnPlay.setEnabled(true);
-							btnRecord.setEnabled(true);
-						}
-					});
+					Log.d(TAG, "Stop");
+					mRecordMp3.stop();	
 				}
 			});
-			
-			return rootView;
+			return rootView;	
 		}
-		
-		/**
-		 * @param path A path where file is saved.
-		 * @return Returns MediaRecorder object.
-		 * 
-		 * This create MediaRecorder object and 
-		 * set the default value of audio settings.
-		 * 
-		 */
-		private MediaRecorder getRecorder(File path) {
-			Log.d(TAG, "getRecorder");
-			MediaRecorder recorder = new MediaRecorder();
-			
-			recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-			recorder.setAudioSamplingRate(SAMPLEING_RATE);
-			recorder.setAudioEncodingBitRate(BIT_RATE);
-			recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-			recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-			recorder.setOutputFile(path.getAbsolutePath());
-			
-			Log.i(TAG, "File path: " + path.getAbsolutePath());
-			Log.i(TAG, "File Recording to " + FILE_RECORDING);
-			try {
-				recorder.prepare();
-			} catch (IOException e) {
-				Log.d(TAG, "prepare failed");
-			}
-			return recorder;
-		}
-		
-		/**
-		 * @param onCompletion MediaPlayer.OnCompletionListener object
-		 * 
-		 * Play the sound recorded through absolute-path.
-		 */
-		private void playRecorded(MediaPlayer.OnCompletionListener onCompletion) {
-			Log.d(TAG, "playRecorded");
-			
-			MediaPlayer player = new MediaPlayer();
-			try {
-				player.setDataSource(FILE_RECORDING.getAbsolutePath());
-				player.prepare();
-				player.setOnCompletionListener(onCompletion);
-				player.start();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
 
 		@Override
 		public void onDialogPositiveClick(DialogFragment dialog) {
-			Log.i(TAG, "Record from Dialog");
-			isRecording = true;
-			mRecorder = getRecorder(FILE_RECORDING);
-			mRecorder.start();
-			btnRecord.setText(R.string.record_stop);	
-		}
 
+		}
 
 		@Override
 		public void onDialogNegativeClick(DialogFragment dialog) {
-			Log.i(TAG, "Record canceled from Dialog");
+			// Do nothing.  Just cancel. 
+			
 		}
-
+		
 		@Override
 		public void onAttach(Activity activity) {
 			super.onAttach(activity);
 			((DjdrmrMain) activity).onSectionAttached(getArguments().getInt(
 					ARG_SECTION_NUMBER));
 		}
+		
 	}
 
 	public static class UploadFragment extends Fragment {
@@ -996,18 +893,70 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 	@Override
 	public void onDialogPositiveClick(DialogFragment dialog) {
-		// call the positive click method of the record fragment
-		RecordFragment mRecordFragment = (RecordFragment) getFragmentManager()
-				.findFragmentByTag("RecordFragment");
-		mRecordFragment.onDialogPositiveClick(dialog);
+		final String TAG = "TEST";
+		Log.d("test", "outside ?????");
+		Log.d(TAG, "Recording started");
+		Dialog dialogView = dialog.getDialog();
+		EditText txt_artist, txt_title, txt_album, txt_comment, txt_year;
+		txt_artist = (EditText) dialogView.findViewById(R.id.record_info_artist);
+		txt_title = (EditText) dialogView.findViewById(R.id.record_info_title);
+		txt_album = (EditText) dialogView.findViewById(R.id.record_info_album);
+		txt_comment = (EditText) dialogView.findViewById(R.id.record_info_comment);
+		txt_year = (EditText) dialogView.findViewById(R.id.record_info_year);
+			
+		mRecordMp3 = new RecordMp3(recordPath, 
+				8000, 
+				8000, 
+				txt_album.getText().toString(), 
+				txt_title.getText().toString(), 
+				txt_artist.getText().toString(), 
+				txt_comment.getText().toString(), 
+				txt_year.getText().toString());
+		mRecordMp3.start();
+	    mRecordMp3.setHandle(new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case RecordMp3.MSG_REC_STARTED:
+					Log.d(TAG, "Recording");
+					break;
+				case RecordMp3.MSG_REC_STOPPED:
+					Log.d(TAG, "Recording stopped");
+					break;
+				case RecordMp3.MSG_ERROR_GET_MIN_BUFFERSIZE:
+					Log.d(TAG, "Buffer");
+					break;
+				case RecordMp3.MSG_ERROR_CREATE_FILE:
+					Log.d(TAG, "Error_Creating file");
+					break;
+				case RecordMp3.MSG_ERROR_REC_START:
+					Log.d(TAG, "Can't start recording");
+					break;
+				case RecordMp3.MSG_ERROR_AUDIO_RECORD:
+					Log.d(TAG, "Can't recording audio");
+					break;
+				case RecordMp3.MSG_ERROR_AUDIO_ENCODE:
+					Log.d(TAG, "Can't encode");
+					break;
+				case RecordMp3.MSG_ERROR_WRITE_FILE:
+					Log.d(TAG, "Can't write a file");
+					break;
+				case RecordMp3.MSG_ERROR_CLOSE_FILE:
+					Log.d(TAG, "Can't close the file");
+					break;
+				default:
+					break;
+				}
+			}
+		});
+		
+		
 	}
 
 	@Override
 	public void onDialogNegativeClick(DialogFragment dialog) {
-		// call the negative click method of the record fragment
-		RecordFragment mRecordFragment = (RecordFragment) getFragmentManager()
-				.findFragmentByTag("RecordFragment");
-		mRecordFragment.onDialogNegativeClick(dialog);
+		// TODO Auto-generated method stub
+		
 	}
-	
+
 }
