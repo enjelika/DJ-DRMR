@@ -61,16 +61,23 @@ public class RecordMp3 {
 
 	private Encoder.Builder myBuilder;
 
-	public RecordMp3(String filePath, int sampleRate, String title,
-			String artist) {
+	public RecordMp3(
+			String filePath,
+			int inSampleRate, 
+			int outSampleRate,
+			String album,
+			String title,
+			String artist,
+			String comment,
+			String year) {
 
 		this.mFilePath = filePath;
-		myBuilder = new Builder(sampleRate, 1, sampleRate, 32);
-		myBuilder.id3tagAlbum("Album");
+		myBuilder = new Builder(inSampleRate, 1, outSampleRate, 32);
+		myBuilder.id3tagAlbum(album);
 		myBuilder.id3tagArtist(artist);
 		myBuilder.id3tagTitle(title);
-		myBuilder.id3tagComment("comment");
-		myBuilder.id3tagYear("2015");
+		myBuilder.id3tagComment(comment);
+		myBuilder.id3tagYear(year);
 	}
 
 	public void start() {

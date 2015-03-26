@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.widget.EditText;
 import edu.uco.sdd.spring15.dj_drmr.R;
 
 public class RecordDialogFragment extends DialogFragment {
@@ -20,6 +21,10 @@ public class RecordDialogFragment extends DialogFragment {
 
 	RecordDialogListener mListener;
 
+	
+	public RecordDialogFragment() {
+	}
+	
 	@Override
 	public void onAttach (Activity activity) {
 		super.onAttach(activity);
@@ -36,6 +41,8 @@ public class RecordDialogFragment extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		LayoutInflater inflater = getActivity().getLayoutInflater();
+
+		
 		builder.setView(inflater.inflate(R.layout.record_info, null))
 				.setPositiveButton(R.string.record_record,
 						new OnClickListener() {

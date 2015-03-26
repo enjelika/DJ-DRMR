@@ -53,8 +53,11 @@
     <string name="record_stop">Stop</string>
     <string name="record_play">Play</string>
     <string name="record_save">Save</string>
-    <string name="record_author">Author</string>
+    <string name="record_artist">Artist</string>
     <string name="record_title">Title</string>
+    <string name="record_album">Album</string>
+    <string name="record_comment">Comment</string>
+    <string name="record_year">Year</string>
     <string name="record_cancel">Cancel</string>
     
     <!-- Upload Activity -->
