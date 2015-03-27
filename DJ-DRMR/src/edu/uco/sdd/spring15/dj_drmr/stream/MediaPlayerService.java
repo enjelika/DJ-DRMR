@@ -143,10 +143,10 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
         Notification.Builder builder = new Notification.Builder(this);
         builder.setContentIntent(pendingIntent)
         		.setSmallIcon(R.drawable.btn_radio)
-        		.setTicker("todo title here")
+        		.setTicker(resourceList.get(trackIndex).getTitle())
         		.setOngoing(true)
         		.setContentTitle("playing")
-        		.setContentText("todo title here");
+        		.setContentText(resourceList.get(trackIndex).getTitle());
         Notification notification = builder.build();
  
         // TODO: make notification into a controller
