@@ -9,12 +9,13 @@
     <LinearLayout
 	    android:id="@+id/title"
 	    android:background="@drawable/border"
+	    android:layout_marginTop="20sp"
 	    android:padding="10dp"
 	    android:layout_height="80dp"
 	    android:layout_width="240dp"
-	    android:layout_gravity="center"
+	    android:layout_centerHorizontal="true"
 	    android:layout_marginBottom="25dp"
-	    android:orientation="horizontal">
+	    android:orientation="horizontal" >
 		    
 		<ImageView
 		    android:id="@+id/logo"
@@ -29,23 +30,24 @@
 	
     <TextView 
         android:id="@+id/txtFileChose"
+        android:layout_below="@id/title"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_marginTop="20sp"
         android:text="@string/txtFileChose"
+        android:textSize="10pt"
         android:textStyle="bold"
         android:textColor="#DAA520"
         android:background="@android:color/transparent"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="50dp"
-        />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/btnUpload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="44dp"
-        android:layout_toRightOf="@+id/txtFileChose"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25sp"
+        android:layout_below="@id/txtFileChose"
         android:background="@drawable/custom_btn"
         android:gravity="center"
         android:padding="10dp"
@@ -75,10 +77,18 @@
         android:id="@+id/uploadBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="44dp"
+        android:layout_centerHorizontal="true"
         android:text="@string/upload"
         android:layout_below="@id/editTextTags"
-        />
+        android:background="@drawable/custom_btn"
+        android:gravity="center"
+        android:padding="10dp"
+        android:shadowColor="#0000CD"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="0.6"
+        android:textColor="#DAA520"
+        android:textSize="10pt"
+        android:textStyle="bold" />
 
 </RelativeLayout>

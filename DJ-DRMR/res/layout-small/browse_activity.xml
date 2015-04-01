@@ -37,44 +37,33 @@
 			    android:src="@drawable/title" />
 			    
 		</LinearLayout>
- 
-	    <LinearLayout
-	        android:id="@+id/browse_tray"
-	        android:background="@drawable/border"
-	        android:padding="15dp"
-	        android:layout_marginTop="15dp"
-	        android:layout_marginBottom="15dp"
-	        android:orientation="vertical"
-	        android:layout_width="240dp"
-	        android:layout_height="wrap_content" >
-			
-		    <ToggleButton
-		            android:id="@+id/btnPlayPause"
-		            android:background="@drawable/custom_btn"
-		            android:layout_width="208dp" 
-		            android:layout_height="50dp"
-		            android:textSize="10pt"
-					android:textStyle="bold"
-					android:textColor="#DAA520"
-					android:gravity="center"
-					android:shadowColor="#0000CD"
-					android:shadowDx="1"
-					android:shadowDy="1"
-					android:shadowRadius="0.6" />
-		    
-		</LinearLayout>
 		
+	    <ListView
+		    android:id="@+id/genreList"
+		    android:background="@drawable/border"
+		    android:padding="10dp"
+		    android:layout_width="wrap_content"
+		    android:layout_height="250sp"
+		    android:divider="#323232"
+		    android:dividerHeight="1dp"
+		    android:scrollbars="vertical" />
+
     </LinearLayout>
 		
-	<ListView
-	    android:id="@+id/genreList"
-	    android:background="@drawable/border"
-	    android:padding="10dp"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/browse_menu"
-	    android:divider="#323232"
-	    android:dividerHeight="1dp"
-	    android:scrollbars="vertical" />
+	<ToggleButton
+	    android:id="@+id/btnPlayPause"
+	    android:background="@drawable/custom_btn"
+	    android:layout_width="208dp" 
+	    android:layout_height="50dp"
+	    android:layout_alignParentBottom="true"
+	    android:layout_centerHorizontal="true"
+	    android:textSize="10pt"
+		android:textStyle="bold"
+		android:textColor="#DAA520"
+		android:gravity="center"
+		android:shadowColor="#0000CD"
+		android:shadowDx="1"
+		android:shadowDy="1"
+		android:shadowRadius="0.6" />
 	
 </RelativeLayout>

@@ -24,8 +24,8 @@
 			    android:layout_height="125dp"
 			    android:layout_width="450dp"
 			    android:layout_gravity="center"
-			    android:layout_marginTop="25dp"
-			    android:layout_marginBottom="25dp"
+			    android:layout_marginTop="25sp"
+			    android:layout_marginBottom="55sp"
 			    android:orientation="horizontal">
 				    
 				<ImageView
@@ -39,43 +39,32 @@
 				    
 			</LinearLayout>
  
-	    <LinearLayout
-	        android:id="@+id/browse_tray"
-	        android:background="@drawable/border"
-	        android:padding="15dp"
-	        android:layout_marginTop="70dp"
-	        android:layout_marginBottom="50dp"
-	        android:layout_gravity="center"
-	        android:orientation="vertical"
-	        android:layout_width="240dp"
-	        android:layout_height="wrap_content" >
-			
-		    <ToggleButton
-		            android:id="@+id/btnPlayPause"
-		            android:background="@drawable/custom_btn"
-		            android:layout_width="208dp" 
-		            android:layout_height="50dp"
-		            android:textSize="20pt"
-					android:textStyle="bold"
-					android:textColor="#DAA520"
-					android:gravity="center"
-					android:shadowColor="#0000CD"
-					android:shadowDx="1"
-					android:shadowDy="1"
-					android:shadowRadius="0.6" />
-		    
-		</LinearLayout>
-		
-		<ListView 
-		   	android:id="@+id/genreList"
-		    android:background="@drawable/border"
-		    android:padding="10dp"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:divider="#323232"
-	        android:dividerHeight="1dp"
-	        android:scrollbars="vertical" />	
-        	
+		    <ListView 
+			   	android:id="@+id/genreList"
+			    android:background="@drawable/border"
+			    android:padding="10dp"
+			    android:layout_width="wrap_content"
+			    android:layout_height="450sp"
+			    android:divider="#323232"
+		        android:dividerHeight="1dp"
+		        android:scrollbars="vertical" />
+
     </LinearLayout>
+    
+	<ToggleButton
+        android:id="@+id/btnPlayPause"
+        android:background="@drawable/custom_btn"
+        android:layout_width="208dp" 
+        android:layout_height="50dp"
+        android:textSize="20pt"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+		android:textStyle="bold"
+		android:textColor="#DAA520"
+		android:gravity="center"
+		android:shadowColor="#0000CD"
+		android:shadowDx="1"
+		android:shadowDy="1"
+		android:shadowRadius="0.6" />
 
 </RelativeLayout>
