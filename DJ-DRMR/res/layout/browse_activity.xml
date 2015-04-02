@@ -48,20 +48,7 @@
 		    android:divider="#323232"
 	        android:dividerHeight="1dp"
 	        android:scrollbars="vertical" />
-			
-	    <ToggleButton
-            android:id="@+id/btnPlayPause"
-            android:background="@drawable/custom_btn"
-            android:layout_width="208dp" 
-            android:layout_height="50dp"
-            android:textSize="10pt"
-			android:textStyle="bold"
-			android:textColor="#DAA520"
-			android:gravity="center"
-			android:shadowColor="#0000CD"
-			android:shadowDx="1"
-			android:shadowDy="1"
-			android:shadowRadius="0.6" />
+
 
     </LinearLayout>
  

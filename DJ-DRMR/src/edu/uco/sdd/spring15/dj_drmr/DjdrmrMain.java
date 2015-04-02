@@ -318,7 +318,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		private boolean bound;
 		private Resources res;
 		private String genres[];
-		private ToggleButton btnPlayPause;
+		//private ToggleButton btnPlayPause;
         private ListView lvGenres;
         private MusicController mController;
         private boolean playbackPaused;
@@ -351,7 +351,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			
 			res = getResources();
 			genres = res.getStringArray(R.array.soundcloud_genres);
-			btnPlayPause = (ToggleButton) rootView.findViewById(R.id.btnPlayPause);
+			//btnPlayPause = (ToggleButton) rootView.findViewById(R.id.btnPlayPause);
 			lvGenres = (ListView) rootView.findViewById(R.id.genreList);
 			initializeButtons();
 			bindToService();
@@ -397,10 +397,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	            //send this instance to the service, so it can make callbacks on this instance as a client
 	            mService.setClient(BrowseFragment.this);
 	            bound = true;
-	 
-	            // TODO: update the UI...?
-		        //Set play/pause button to reflect state of the service's contained player
-	            btnPlayPause.setChecked(mService.getMediaPlayer().isPlaying());	
+	
 	            // set the mediacontroller
 	            setController();
 	        }
@@ -412,15 +409,9 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	    };
 	    
 	    private void initializeButtons() {
-	        // PLAY/PAUSE BUTTON
-	        btnPlayPause.setOnClickListener(this);
-	        
-//	        setController();
 	        
 	        final ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem, genres);
 	        lvGenres.setAdapter(genreAdapter);
-
-			//final ListView lvTracks = (ListView) findViewById(R.id.trackList);
 	        
 	        lvGenres.setOnItemClickListener(new OnItemClickListener() {
 
@@ -461,7 +452,6 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 						bundle.putParcelableArrayList("results", resourceList);
 						t.setArguments(bundle);
 						t.show(getFragmentManager(), result);
-						//lvTracks.setAdapter(new ArrayAdapter<String>(BrowseActivity.this, R.layout.listitem, tracks));
 					} catch (JSONException e) {
 						Log.e("BrowseFragment", "JSONException when parsing soundcloud data");
 						e.printStackTrace();
@@ -490,7 +480,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 		@Override
 		public void onInitializePlayerSuccess() {
-			btnPlayPause.setChecked(true);		
+				
 		}
 
 		@Override
@@ -518,10 +508,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			if (bound) {
 				Log.d("BrowseActivity", "onPickTrackClick");
 				resource = resourceList.get(trackIndex);
-//				resource.pullData();
-//				while (!resource.hasData()) { /* wait for data */ }
 				mService.initializeMediaPlayer(resourceList, trackIndex);
-				btnPlayPause.setChecked(true);
 			}
 		}
 		
@@ -535,39 +522,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
-			case (R.id.btnPlayPause):
-				if (bound) {
-	                mp = mService.getMediaPlayer();
-	
-	                //pressed pause ->pause
-	                if (!btnPlayPause.isChecked()) {
-	
-	                    if (mp.isStarted()) {
-	                        mService.pauseMediaPlayer();
-	                    }
-	
-	                }
-	
-	                //pressed play
-	                else if (btnPlayPause.isChecked()) {
-	                    // STOPPED, CREATED, EMPTY, -> initialize
-	                    if (mp.isStopped()
-	                            || mp.isCreated()
-	                            || mp.isEmpty())
-	                    {
-	                        mService.initializeMediaPlayer(resource);
-	                    }
-	
-	                    //prepared, paused -> resume play
-	                    else if (mp.isPrepared()
-	                            || mp.isPaused())
-	                    {
-	                        mService.startMediaPlayer();
-	                    }
-	
-	                }
-	            }
-				break;
+				default: break;
 			}
 		}
 
@@ -725,8 +680,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 		@Override
 		public void onDialogNegativeClick(DialogFragment dialog) {
-			// Do nothing.  Just cancel. 
-			
+
 		}
 		
 		@Override

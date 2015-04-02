@@ -34,8 +34,7 @@ import android.widget.ListView;
 import android.widget.ToggleButton;
 
 public class BrowseActivity extends Activity implements IMediaPlayerServiceClient, TrackResultsListener 
-{
-	
+{	
 	private StateMediaPlayer mp = null;
 	private MediaPlayerService mService;
 	private SoundcloudResource resource = null;
@@ -43,8 +42,6 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 	private boolean bound;
 	private Resources res;
 	private String genres[];
-	
-	private ToggleButton btnPlayPause;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +79,6 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
             //send this instance to the service, so it can make callbacks on this instance as a client
             mService.setClient(BrowseActivity.this);
             bound = true;
- 
-            // TODO: update the UI...?
-            //Set play/pause button to reflect state of the service's contained player
-            // deleted a "final" declaration of the togglebutton here
-            btnPlayPause.setChecked(mService.getMediaPlayer().isPlaying()); 
         }
  
         @Override
@@ -99,51 +91,10 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
     	if (bound) {
     		mp = mService.getMediaPlayer();
     	}
-        // PLAY/PAUSE BUTTON
-    	btnPlayPause = (ToggleButton) findViewById(R.id.btnPlayPause);
-        btnPlayPause.setOnClickListener(new OnClickListener() {
- 
-            @Override
-            public void onClick(View v) {
-                if (bound && mp != null) {
-                    //pressed pause ->pause
-                    if (!btnPlayPause.isChecked()) {
- 
-                        if (mp.isStarted()) {
-                            mService.pauseMediaPlayer();
-                        }
- 
-                    }
- 
-                    //pressed play
-                    else if (btnPlayPause.isChecked()) {
-                    	if (resource != null) {
-	                        // STOPPED, CREATED, EMPTY, -> initialize
-	                        if (mp.isStopped() || mp.isCreated() || mp.isEmpty())
-	                        {
-	                            mService.initializeMediaPlayer(resource);
-	                        }
-	 
-	                        //prepared, paused -> resume play
-	                        else if (mp.isPrepared()
-	                                || mp.isPaused())
-	                        {
-	                            mService.startMediaPlayer();
-	                        }
-                    	} else {
-                    		Log.e("BrowseActivity", "tried to play, resource is null");
-                    	}
-                    }
-                }
-            }
- 
-        });
         
         ListView lvGenres = (ListView) findViewById(R.id.genreList);
         final ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(this, R.layout.listitem, genres);
         lvGenres.setAdapter(genreAdapter);
-
-		//final ListView lvTracks = (ListView) findViewById(R.id.trackList);
         
         lvGenres.setOnItemClickListener(new OnItemClickListener() {
 
@@ -155,9 +106,12 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 				SoundcloudResource tracklist = new SoundcloudResource(
 							"/tracks?client_id=" + SoundcloudResource.CLIENT_ID + "&genres=" + genre);
 				tracklist.setType(SoundcloudResource.RESOURCE_TYPE_QUERY_RESULT); // a list of tracks
+				
 				while (!tracklist.hasData()) { /* wait for data */ }
+				
 				String result = tracklist.getSoundcloudData();
 				Log.d("BrowseActivity", "onItemClick got soundcloud track list");
+				
 				try {
 					JSONArray json = new JSONArray(result);
 					resourceList = new ArrayList<SoundcloudResource>();
@@ -178,13 +132,11 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 					// debug
 					Log.d("BrowseActivity", "resourceList == null? " + (resourceList==null)+"");
 					
-					//pass to fragment - Debra
 					TrackResultsFragment t = new TrackResultsFragment();
 					Bundle bundle = new Bundle();
 					bundle.putParcelableArrayList("results", resourceList);
 					t.setArguments(bundle);
 					t.show(getFragmentManager(), result);
-					//lvTracks.setAdapter(new ArrayAdapter<String>(BrowseActivity.this, R.layout.listitem, tracks));
 				} catch (JSONException e) {
 					Log.e("BrowseActivity", "JSONException when parsing soundcloud data");
 					e.printStackTrace();
@@ -213,7 +165,7 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 
 	@Override
 	public void onInitializePlayerSuccess() {
-		btnPlayPause.setChecked(true);		
+		 	
 	}
 
 	@Override
@@ -243,7 +195,6 @@ public class BrowseActivity extends Activity implements IMediaPlayerServiceClien
 			Log.d("BrowseActivity", "onPickTrackClick");
 			resource = resourceList.get(trackIndex);
 			mService.initializeMediaPlayer(resource);
-			btnPlayPause.setChecked(true);
 		}
 	}
 }
