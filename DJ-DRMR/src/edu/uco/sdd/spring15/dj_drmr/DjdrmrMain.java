@@ -26,6 +26,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -44,6 +45,7 @@ import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,11 +72,12 @@ import edu.uco.sdd.spring15.dj_drmr.stream.IMediaPlayerServiceClient;
 import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService;
 import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService.MediaPlayerBinder;
 import edu.uco.sdd.spring15.dj_drmr.stream.MusicController;
+import edu.uco.sdd.spring15.dj_drmr.stream.SearchFragment.SearchListener;
 import edu.uco.sdd.spring15.dj_drmr.stream.SoundcloudResource;
 import edu.uco.sdd.spring15.dj_drmr.stream.StateMediaPlayer;
 
 public class DjdrmrMain extends Activity implements 
-NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, RecordDialogListener{
+NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, RecordDialogListener, SearchListener {
 
 
 	/**
@@ -195,6 +198,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			case R.id.action_logout:
 				Intent i = new Intent(this, Login.class);
 				startActivity(i);
+			
 			default:
 				return super.onOptionsItemSelected(item);
 		}
@@ -309,7 +313,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	}
 	
 	public static class BrowseFragment extends Fragment implements IMediaPlayerServiceClient, TrackResultsListener, 
-																	OnClickListener, MediaPlayerControl {
+																	OnClickListener, MediaPlayerControl, SearchListener {
 		
 		private StateMediaPlayer mp = null;
 		private MediaPlayerService mService;
@@ -322,6 +326,9 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
         private ListView lvGenres;
         private MusicController mController;
         private boolean playbackPaused;
+        // search variables
+        private String artist, keyword;
+        private boolean searching = false;
 		
 		/**
 		 * The fragment argument representing the section number for this
@@ -349,11 +356,19 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			View rootView = inflater.inflate(R.layout.browse_activity, container,
 					false);
 			
+			// if args are present,
+			Bundle args = this.getArguments();
+			if (args != null) {
+				artist = args.getString("artist");
+				keyword = args.getString("keyword");
+				searching = args.getBoolean("searching");
+			}
+			
 			res = getResources();
 			genres = res.getStringArray(R.array.soundcloud_genres);
 			//btnPlayPause = (ToggleButton) rootView.findViewById(R.id.btnPlayPause);
 			lvGenres = (ListView) rootView.findViewById(R.id.genreList);
-			initializeButtons();
+			initialize();
 			bindToService();
 			
 			return rootView;
@@ -364,6 +379,10 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			super.onResume();
 			if (bound && mService.isPaused()) {
 				setController();
+			}
+			
+			if (searching) {
+				doSearch();
 			}
 		}
 		
@@ -408,7 +427,12 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	        }
 	    };
 	    
-	    private void initializeButtons() {
+	    private void initialize() {
+	    	
+	    	Log.d("BrowseActivity", "initialize");
+	    	
+	    	InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 	        
 	        final ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem, genres);
 	        lvGenres.setAdapter(genreAdapter);
@@ -458,6 +482,13 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 					}
 				}
 			});
+	    }
+	    
+	    private void doSearch() {
+	    	String message = "search for artist: " + artist +
+					", keyword: " + keyword;
+			Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT)
+				.show();
 	    }
 		    
 	    private boolean MediaPlayerServiceRunning() {
@@ -616,6 +647,21 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		@Override
 		public boolean canSeekForward() {
 			return true;
+		}
+		
+		@Override
+		public void onSearchDialogPositiveClick(DialogFragment dialog) {
+			// TODO 
+			// get search params from bundle
+//			String message = "search for artist: " + txt_artist.getText().toString() +
+//					", keyword: " + txt_keyword.getText().toString();
+//			Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT)
+//				.show();
+		}
+
+		@Override
+		public void onSearchDialogNegativeClick(DialogFragment dialog) {
+			// cancel button clicked - do nothing
 		}
 	}
 	
@@ -911,6 +957,46 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	public void onDialogNegativeClick(DialogFragment dialog) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void onSearchDialogPositiveClick(DialogFragment dialog) {
+		// call the searchdialog positive click method in browse fragment
+//		BrowseFragment mBrowseFragment = (BrowseFragment) getFragmentManager()
+//				.findFragmentByTag("BrowseFragment");
+//		mBrowseFragment.onSearchDialogPositiveClick(dialog);
+		
+		// get the search params from the dialog
+		Dialog dialogView = dialog.getDialog();
+		EditText txt_artist, txt_keyword;
+		txt_artist = (EditText) dialogView.findViewById(R.id.search_info_artist);
+		txt_keyword = (EditText) dialogView.findViewById(R.id.search_info_keyword);
+		
+		// hide the keyboard
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+		
+		// open the browse fragment with the search params
+		BrowseFragment browseFragment = new BrowseFragment();
+		Bundle args = new Bundle();
+		args.putString("artist", txt_artist.getText().toString());
+		args.putString("keyword", txt_keyword.getText().toString());
+		args.putBoolean("searching", true);
+		browseFragment.setArguments(args);
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		transaction.replace(R.id.container, browseFragment, "BrowseFragment")
+			.addToBackStack(null)
+			.commit();
+	}
+
+	@Override
+	public void onSearchDialogNegativeClick(DialogFragment dialog) {
+//		BrowseFragment mBrowseFragment = (BrowseFragment) getFragmentManager()
+//				.findFragmentByTag("BrowseFragment");
+//		mBrowseFragment.onSearchDialogNegativeClick(dialog);
+		
+		// they clicked "cancel" - do nothing
+//		dialog.dismiss();
 	}
 
 }

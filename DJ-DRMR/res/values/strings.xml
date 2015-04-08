@@ -43,6 +43,8 @@
     <string name="browse">Browse</string>
     <string name="browseSound">Browse SoundCloud</string>
     <string name="example">Example application</string>
+    <string name="search">Search</string>
+    <string name="search_keyword">Keyword</string>
     
     <!-- soundcloud utility strings -->
     <string name="client_id">0724aaed3681642b2c352cea90e79297</string>

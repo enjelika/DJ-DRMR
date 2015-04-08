@@ -1,7 +1,10 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
+import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment;
+import edu.uco.sdd.spring15.dj_drmr.stream.SearchFragment;
 import android.app.Activity;
 import android.app.ActionBar;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
@@ -273,9 +276,9 @@ public class NavigationDrawerFragment extends Fragment {
 			return true;
 		}
 
-		if (item.getItemId() == R.id.action_example) {
-			Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT)
-					.show();
+		if (item.getItemId() == R.id.action_search) {
+			DialogFragment newFragment = new SearchFragment();
+			newFragment.show(getFragmentManager(), "dlgSearch");
 			return true;
 		}
 
