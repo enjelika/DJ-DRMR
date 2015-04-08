@@ -40,6 +40,7 @@ public class UploadActivity extends Activity {
 	private EditText editTextTags;
 	private Button btUpload;
 	private Song song;
+	private EditText newName;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,7 @@ public class UploadActivity extends Activity {
 		this.txtFileChose = (TextView) findViewById(R.id.txtFileChose);
 		this.editTextTags = (EditText) findViewById(R.id.editTextTags);
 		this.btUpload = (Button) findViewById(R.id.uploadBtn);
+		this.newName = (EditText) findViewById(R.id.newName);
 		
 		this.btUpload.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -62,16 +64,17 @@ public class UploadActivity extends Activity {
 					Token token = wrapper.login("renan.kub@gmail.com", "soundcloud");
 					song.getSong().setReadable(true, false);
 					HttpResponse resp = wrapper.post(Request.to(Endpoints.TRACKS)
-		            .add(Params.Track.TITLE, "test.mp3")
-		            .add(Params.Track.TAG_LIST, "test")
+		            .add(Params.Track.TITLE, song.getName())
+		            .add(Params.Track.TAG_LIST, song.getTags())
 		            .withFile(Params.Track.ASSET_DATA, song.getSong()));
 					
-					Toast.makeText(getApplicationContext(), "Uploading", Toast.LENGTH_SHORT).show();
 					
 					
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
+					Toast.makeText(getApplicationContext(), "Uploaded Successfully", Toast.LENGTH_SHORT).show();
+					newName.setText("");
 					editTextTags.setText("");
 					txtFileChose.setText("Choose File");
 				}
@@ -81,8 +84,9 @@ public class UploadActivity extends Activity {
 		this.btChoose.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				Uri uri = Uri.parse("Android/data/edu.uco.sdd.spring15.dj_drmr");
 				 Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-			        fileintent.setType("audio/mpeg");
+			        fileintent.setDataAndType(uri, "audio/mpeg");
 			        try {
 			            startActivityForResult(fileintent, 1);
 			        } catch (ActivityNotFoundException e) {
@@ -126,7 +130,7 @@ public class UploadActivity extends Activity {
 	        Uri uri = data.getData();
 	        String path = uri.getPath();
 	        File input = new File(path);
-	        this.song = new Song(input);
+	        this.song = new Song(input, this.newName.getText().toString());
 	        txtFileChose.setText(input.getName());
 	    }           
 	    super.onActivityResult(requestCode, resultCode, data);

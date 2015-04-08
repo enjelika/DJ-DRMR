@@ -7,9 +7,11 @@ import java.util.List;
 public class Song {
 	private File song;
 	private List<String> tags;
+	private String name;
 	
-	public Song(File song){
+	public Song(File song, String name){
 		this.song = song;
+		this.setName(name);
 	}
 	
 	public Song (File song, List<String> tags){
@@ -31,5 +33,13 @@ public class Song {
 	
 	public File getSong(){
 		return this.song;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

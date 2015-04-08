@@ -745,7 +745,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		private EditText editTextTags;
 		private Button btUpload;
 		private Song song;
-		
+		private EditText newName;
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -776,6 +776,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			this.txtFileChose = (TextView) rootView.findViewById(R.id.txtFileChose);
 			this.editTextTags = (EditText) rootView.findViewById(R.id.editTextTags);
 			this.btUpload = (Button) rootView.findViewById(R.id.uploadBtn);
+			this.newName = (EditText) rootView.findViewById(R.id.newName);
 			
 			this.btUpload.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -788,15 +789,17 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 									Token token = wrapper.login("renan.kub@gmail.com", "soundcloud");
 									song.getSong().setReadable(true, false);
 									HttpResponse resp = wrapper.post(Request.to(Endpoints.TRACKS)
-						            .add(Params.Track.TITLE, "test.mp3")
-						            .add(Params.Track.TAG_LIST, "test")
-						            .withFile(Params.Track.ASSET_DATA, song.getSong()));
+											 .add(Params.Track.TITLE, song.getName())
+									            .add(Params.Track.TAG_LIST, song.getTags())
+									            .withFile(Params.Track.ASSET_DATA, song.getSong()));
 									
 			                		 } catch (IOException e) {
 			     						e.printStackTrace();
 			     					}
 			                	}
 	                	 }).start();
+	                	 Toast.makeText(getActivity(),"Uploaded Successfully",Toast.LENGTH_SHORT).show();
+	                	newName.setText("");
     					editTextTags.setText("");
     					txtFileChose.setText("Choose File");
 				}
@@ -805,8 +808,9 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			this.btChoose.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					Uri uri = Uri.parse("Android/data/edu.uco.sdd.spring15.dj_drmr");
 					 Intent fileintent = new Intent(Intent.ACTION_GET_CONTENT);
-				        fileintent.setType("audio/mpeg");
+					 fileintent.setDataAndType(uri, "audio/mpeg");
 				        try {
 				            startActivityForResult(fileintent, 1);
 				        } catch (ActivityNotFoundException e) {
@@ -852,7 +856,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		        Uri uri = data.getData();
 		        String path = uri.getPath();
 		        File input = new File(path);
-		        this.song = new Song(input);
+		        this.song = new Song(input, this.newName.getText().toString());
 		        txtFileChose.setText(input.getName());
 		    }           
 		    super.onActivityResult(requestCode, resultCode, data);
