@@ -6,12 +6,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.GregorianCalendar;
+
+import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.ProgressBar;
+import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain;
+import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain.RecordFragment;
+import edu.uco.sdd.spring15.dj_drmr.R;
 import edu.uco.sdd.spring15.dj_drmr.record.Encoder.Builder;
 
 /**
@@ -37,40 +43,32 @@ public class RecordMp3 {
 	private boolean mIsRecording = false;
 
 	private Handler mHandler;
+	
 	public static final int MSG_REC_STARTED = 0;
-
 	public static final int MSG_REC_STOPPED = 1;
-
 	public static final int MSG_ERROR_GET_MIN_BUFFERSIZE = 2;
-
 	public static final int MSG_ERROR_CREATE_FILE = 3;
-
 	public static final int MSG_ERROR_REC_START = 4;
-
 	public static final int MSG_ERROR_AUDIO_RECORD = 5;
-
 	public static final int MSG_ERROR_AUDIO_ENCODE = 6;
-
 	public static final int MSG_ERROR_WRITE_FILE = 7;
-
 	public static final int MSG_ERROR_CLOSE_FILE = 8;
-
-	private static final String AUDIO_RECORDER_FOLDER = "AudioRecorder";
-
+	
 	private Encoder myEncoder;
 
 	private Encoder.Builder myBuilder;
+	
+	private ProgressBar mProgressBar;
+	
+	private double amplitude = 0;
+	
+	protected DjdrmrMain context;
 
-	public RecordMp3(
-			String filePath,
-			int inSampleRate, 
-			int outSampleRate,
-			String album,
-			String title,
-			String artist,
-			String comment,
+	public RecordMp3(Context context, String filePath, int inSampleRate, int outSampleRate,
+			String album, String title, String artist, String comment,
 			String year) {
-
+		
+		this.context = (DjdrmrMain) context;
 		this.mFilePath = filePath;
 		myBuilder = new Builder(inSampleRate, 1, outSampleRate, 32);
 		myBuilder.id3tagAlbum(album);
@@ -82,7 +80,11 @@ public class RecordMp3 {
 
 	public void start() {
 		Log.d(TAG, "Start");
-
+		
+		
+		if (mProgressBar== null) {
+			Log.d(TAG, "progressbar is null");
+		}
 		if (mIsRecording) {
 			return;
 		}
@@ -108,14 +110,14 @@ public class RecordMp3 {
 						AudioFormat.CHANNEL_IN_MONO,
 						AudioFormat.ENCODING_PCM_16BIT, minBufferSize * 2);
 
-				// PCM buffer size (5sec)
-				short[] buffer = new short[mSampleRate * (16 / 8) * 1 * 5]; // SampleRate[Hz]
-																			// *
-																			// 16bit
-																			// *
-																			// Mono
-																			// *
-																			// 5sec
+				// PCM buffer size
+				short[] buffer = new short[mSampleRate * (16 / 8) * 1 * 360]; // SampleRate[Hz]
+																				// *
+																				// 16bit
+																				// *
+																				// Mono
+																				// *
+																				// 180sec
 				byte[] mp3buffer = new byte[(int) (7200 + buffer.length * 2 * 1.25)];
 
 				FileOutputStream output = null;
@@ -150,6 +152,25 @@ public class RecordMp3 {
 						while (mIsRecording) {
 							readSize = audioRecord.read(buffer, 0,
 									minBufferSize);
+							
+							double sum = 0;
+							for (int i = 0; i < readSize; i++) {
+								sum += buffer[i] * buffer[i];
+							}
+							
+							if (readSize > 0) {
+								amplitude = sum / readSize;
+								context.mProgressBar = (ProgressBar) context.findViewById(R.id.record_progressBar);
+								
+								context.runOnUiThread(new Runnable() {
+									
+									@Override
+									public void run() {
+										context.mProgressBar.setProgress((int) Math.sqrt(amplitude));
+										
+									}
+								});
+							}
 							if (readSize < 0) {
 								if (mHandler != null) {
 									mHandler.sendEmptyMessage(MSG_ERROR_AUDIO_RECORD);
@@ -177,6 +198,7 @@ public class RecordMp3 {
 									}
 								}
 							}
+							
 						}
 
 						int flushResult = myEncoder.flush(mp3buffer);
@@ -203,6 +225,9 @@ public class RecordMp3 {
 							}
 						}
 					} finally {
+						
+						// Set progressbar default.
+						context.mProgressBar.setProgress(0);
 						audioRecord.stop();
 						audioRecord.release();
 					}
@@ -217,17 +242,17 @@ public class RecordMp3 {
 			}
 		}.start();
 	}
-	
+
 	public void stop() {
 		mIsRecording = false;
 	}
-	
+
 	public boolean isRecording() {
 		return mIsRecording;
 	}
-	
+
 	public void setHandle(Handler handler) {
 		this.mHandler = handler;
 	}
-	
+
 }

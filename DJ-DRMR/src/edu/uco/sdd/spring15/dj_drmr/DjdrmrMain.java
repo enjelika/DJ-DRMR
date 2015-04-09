@@ -3,21 +3,21 @@ package edu.uco.sdd.spring15.dj_drmr;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.HttpResponse;
+import org.cmc.music.common.ID3WriteException;
+import org.cmc.music.metadata.IMusicMetadata;
+import org.cmc.music.metadata.MusicMetadata;
+import org.cmc.music.metadata.MusicMetadataSet;
+import org.cmc.music.myid3.MyID3;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.soundcloud.api.ApiWrapper;
-import com.soundcloud.api.Endpoints;
-import com.soundcloud.api.Params;
-import com.soundcloud.api.Request;
-import com.soundcloud.api.Token;
-
-import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment.TrackResultsListener;
-import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogListener;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -26,16 +26,14 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
-import android.content.ServiceConnection;
-import android.media.MediaPlayer;
-import android.media.MediaRecorder;
+import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,31 +41,42 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
+import android.text.format.Time;
 import android.util.Log;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 import android.widget.MediaController.MediaPlayerControl;
+import android.widget.ProgressBar;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.ToggleButton;
+import android.widget.Toast;
+
+import com.soundcloud.api.ApiWrapper;
+import com.soundcloud.api.Endpoints;
+import com.soundcloud.api.Params;
+import com.soundcloud.api.Request;
+import com.soundcloud.api.Token;
+
+import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment.TrackResultsListener;
 import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment;
+import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment.RecordDialogListener;
 import edu.uco.sdd.spring15.dj_drmr.record.RecordMp3;
+import edu.uco.sdd.spring15.dj_drmr.record.RecordSong;
 import edu.uco.sdd.spring15.dj_drmr.stream.IMediaPlayerServiceClient;
 import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService;
 import edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService.MediaPlayerBinder;
@@ -92,9 +101,13 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	 */
 	private CharSequence mTitle;
 	
-	private static String recordPath = Environment.getExternalStorageDirectory() + "/test.mp3";
+	private static String lastRecordedFile;
+	
 	//MP3
 	private static RecordMp3 mRecordMp3;
+	public static ProgressBar mProgressBar;
+	private static String record_artist;
+	private static String record_title;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -665,7 +678,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		}
 	}
 	
-	public static class RecordFragment extends Fragment implements RecordDialogListener{
+public static class RecordFragment extends Fragment implements RecordDialogListener{
 		
 		private static final String TAG = RecordFragment.class.getSimpleName();
 
@@ -673,7 +686,12 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		private Button btnRecord;
 		private Button btnStop;
 		
-
+		// List View
+		private ListView listSongs;
+		private ArrayList<RecordSong> songs;
+		private File myMusicFolder;
+		private SimpleAdapter adapter;
+		
 		
 		private static final String ARG_SECTION_NUMBER = "section_number";
 		
@@ -695,6 +713,25 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 					false);
 		    btnRecord = (Button) rootView.findViewById(R.id.btn_record);
 		    btnStop = (Button) rootView.findViewById(R.id.btn_stop);
+		    listSongs = (ListView) rootView.findViewById(R.id.record_songs);
+		    
+		    myMusicFolder = new File(Environment.getExternalStorageDirectory() + "/Djdrmr/");
+		    
+		    bindSongsToListView(myMusicFolder);
+		    
+		    listSongs.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					
+					String filename = songs.get(position).getFilename();
+					Uri audio = Uri.parse("file://" + myMusicFolder + "/" + filename);
+					Intent intent = new Intent(Intent.ACTION_VIEW);
+		            intent.setDataAndType(audio, "audio/*");  
+		            startActivity(intent);
+				}
+			});
 		    
 
 		    btnRecord.setOnClickListener(new OnClickListener() {
@@ -702,7 +739,6 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				@Override
 				public void onClick(View v) {
 					Log.d(TAG, "Start button clicked");
-//					mRecordMp3.start();
 					DialogFragment newFragment = new RecordDialogFragment();
 					newFragment.show(getFragmentManager(), "id3");
 				}
@@ -713,21 +749,17 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				@Override
 				public void onClick(View v) {
 					Log.d(TAG, "Stop");
-					mRecordMp3.stop();	
+					mRecordMp3.stop();
+					setID3();
 				}
 			});
 			return rootView;	
 		}
 
 		@Override
-		public void onDialogPositiveClick(DialogFragment dialog) {
-
-		}
-
+		public void onDialogPositiveClick(DialogFragment dialog) {}
 		@Override
-		public void onDialogNegativeClick(DialogFragment dialog) {
-
-		}
+		public void onDialogNegativeClick(DialogFragment dialog) {}
 		
 		@Override
 		public void onAttach(Activity activity) {
@@ -736,6 +768,106 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 					ARG_SECTION_NUMBER));
 		}
 		
+		private void bindSongsToListView(File musicFolder) {
+			songs = new ArrayList<RecordSong>();
+			ArrayList<Map<String, String>> songsMap = new ArrayList<Map<String, String>>();
+			
+			for (File f : musicFolder.listFiles()) {
+				MediaMetadataRetriever md = new MediaMetadataRetriever();
+				md.setDataSource(musicFolder + "/" + f.getName());
+				Log.d(TAG, "filename = " + f.getName());
+				
+				int secs = Integer.parseInt(md.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)) / 1000;
+				int mins= secs / 60;
+				secs =  secs % 60;
+				String artist = md.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+				if (artist == null || artist.equals(""))
+					artist = "Unknown";
+				String songTitle  = md.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+				if (songTitle == null)
+					songTitle = f.getName();
+				String duration = String.format("%02d:%02d", mins,secs);
+				
+				MusicMetadataSet src_set = null;
+				try {
+					src_set = new MyID3().read(f);
+	            } catch (IOException e1) {
+	            	e1.printStackTrace();
+	            } 
+				
+				if (src_set == null) {
+					Log.d("Song to Listview", "NULL");
+				} else {
+					try {
+						IMusicMetadata metadata = src_set.getSimplified();
+			            artist = metadata.getArtist();  
+			            songTitle = metadata.getSongTitle(); 
+			            Log.d(TAG, "artist = " + artist);
+			            Log.d(TAG, "Title = " + songTitle);
+					} catch (Exception e) {
+		                e.printStackTrace();
+		            }
+				}
+				
+				RecordSong s = new RecordSong();
+				s.setSinger(artist);
+				s.setTitle(songTitle);
+				s.setFilename(f.getName());
+				s.setDuration(duration);
+				songs.add(s);
+				
+				Map<String, String> mapObject = convertSongToMap(s);
+				songsMap.add(mapObject);
+				
+			}
+			
+			 adapter = new SimpleAdapter(getActivity(), songsMap, R.layout.record_song,
+				    new String[] { "title","duration","singer"},
+				    new int[] {  R.id.record_txt_title, R.id.record_txt_duration, R.id.record_txt_artist} );
+			
+			listSongs.setAdapter(adapter);
+			
+		}
+		
+		public Map<String,String> convertSongToMap(RecordSong s) {
+			
+			HashMap<String, String> map = new HashMap<String,String>();
+			map.put("title", s.getTitle());
+			map.put("duration", s.getDuration());
+			map.put("singer", s.getSinger());
+			return map;
+			
+		}
+		
+		private void setID3() {
+			File src = new File(lastRecordedFile);
+            MusicMetadataSet src_set = null;
+            try {
+                src_set = new MyID3().read(src);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } 
+            if (src_set == null) {
+                Log.i("NULL", "NULL");
+            } else {
+            	
+            	MusicMetadata meta = new MusicMetadata("name");
+            	meta.setArtist(record_artist);
+            	meta.setSongTitle(record_title);
+            	try {
+            		new MyID3().update(src, src_set, meta);
+            	} catch (UnsupportedEncodingException e) {
+            		e.printStackTrace();
+            	} catch (ID3WriteException e) {
+            		e.printStackTrace();
+            	} catch (IOException e) {
+            		e.printStackTrace();
+            	} finally {
+            		adapter.notifyDataSetChanged();
+					bindSongsToListView(myMusicFolder);
+            	}
+            }
+		}
 	}
 
 	public static class UploadFragment extends Fragment {
@@ -898,24 +1030,31 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	@Override
 	public void onDialogPositiveClick(DialogFragment dialog) {
 		final String TAG = "TEST";
-		Log.d("test", "outside ?????");
 		Log.d(TAG, "Recording started");
 		Dialog dialogView = dialog.getDialog();
-		EditText txt_artist, txt_title, txt_album, txt_comment, txt_year;
+		EditText txt_artist, txt_title;
 		txt_artist = (EditText) dialogView.findViewById(R.id.record_info_artist);
 		txt_title = (EditText) dialogView.findViewById(R.id.record_info_title);
-		txt_album = (EditText) dialogView.findViewById(R.id.record_info_album);
-		txt_comment = (EditText) dialogView.findViewById(R.id.record_info_comment);
-		txt_year = (EditText) dialogView.findViewById(R.id.record_info_year);
-			
-		mRecordMp3 = new RecordMp3(recordPath, 
+//		txt_album = (EditText) dialogView.findViewById(R.id.record_info_album);
+//		txt_comment = (EditText) dialogView.findViewById(R.id.record_info_comment);
+//		txt_year = (EditText) dialogView.findViewById(R.id.record_info_year);
+		
+		record_artist = txt_artist.getText().toString();
+		record_title = txt_title.getText().toString();
+		
+		Log.d(TAG, "Title = " + txt_title.getText().toString());
+		lastRecordedFile = getFileName();
+		mRecordMp3 = new RecordMp3(
+				DjdrmrMain.this,
+				lastRecordedFile, 
 				8000, 
 				8000, 
-				txt_album.getText().toString(), 
+				"", // Album 
 				txt_title.getText().toString(), 
 				txt_artist.getText().toString(), 
-				txt_comment.getText().toString(), 
-				txt_year.getText().toString());
+				"", // Comment
+				""); // Year
+				
 		mRecordMp3.start();
 	    mRecordMp3.setHandle(new Handler() {
 			@Override
@@ -953,54 +1092,26 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				}
 			}
 		});
-		
-		
 	}
-
+	
 	@Override
-	public void onDialogNegativeClick(DialogFragment dialog) {
-		// TODO Auto-generated method stub
+	public void onDialogNegativeClick(DialogFragment dialog) {}
+	
+	private String getFileName() {
+		File folder = new File(Environment.getExternalStorageDirectory() + "/Djdrmr");
+		boolean success = true;
+		Time time = new Time();
+		time.setToNow();
 		
+		if (!folder.exists()) {
+			success = folder.mkdir();
+		}
+		
+		if (success) {
+			Log.d("File Name", "File Name=" + Environment.getExternalStorageDirectory() + "/Djdrmr/" + time.format("%Y%m%d%H%M%S") + ".mp3");
+			return Environment.getExternalStorageDirectory() + "/Djdrmr/" + time.format("%Y%m%d%H%M%S") + ".mp3";
+		}
+		
+		return Environment.getExternalStorageDirectory() + "/Djdrmr/" + time.format("%Y%m%d%H%M%S") + ".mp3";
 	}
-
-	@Override
-	public void onSearchDialogPositiveClick(DialogFragment dialog) {
-		// call the searchdialog positive click method in browse fragment
-//		BrowseFragment mBrowseFragment = (BrowseFragment) getFragmentManager()
-//				.findFragmentByTag("BrowseFragment");
-//		mBrowseFragment.onSearchDialogPositiveClick(dialog);
-		
-		// get the search params from the dialog
-		Dialog dialogView = dialog.getDialog();
-		EditText txt_artist, txt_keyword;
-		txt_artist = (EditText) dialogView.findViewById(R.id.search_info_artist);
-		txt_keyword = (EditText) dialogView.findViewById(R.id.search_info_keyword);
-		
-		// hide the keyboard
-		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-		
-		// open the browse fragment with the search params
-		BrowseFragment browseFragment = new BrowseFragment();
-		Bundle args = new Bundle();
-		args.putString("artist", txt_artist.getText().toString());
-		args.putString("keyword", txt_keyword.getText().toString());
-		args.putBoolean("searching", true);
-		browseFragment.setArguments(args);
-		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		transaction.replace(R.id.container, browseFragment, "BrowseFragment")
-			.addToBackStack(null)
-			.commit();
-	}
-
-	@Override
-	public void onSearchDialogNegativeClick(DialogFragment dialog) {
-//		BrowseFragment mBrowseFragment = (BrowseFragment) getFragmentManager()
-//				.findFragmentByTag("BrowseFragment");
-//		mBrowseFragment.onSearchDialogNegativeClick(dialog);
-		
-		// they clicked "cancel" - do nothing
-//		dialog.dismiss();
-	}
-
 }
