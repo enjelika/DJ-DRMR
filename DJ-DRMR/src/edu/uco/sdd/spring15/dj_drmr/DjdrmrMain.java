@@ -1114,4 +1114,16 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 		
 		return Environment.getExternalStorageDirectory() + "/Djdrmr/" + time.format("%Y%m%d%H%M%S") + ".mp3";
 	}
+
+	@Override
+	public void onSearchDialogPositiveClick(DialogFragment dialog) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSearchDialogNegativeClick(DialogFragment dialog) {
+		// TODO Auto-generated method stub
+		
+	}
 }
