@@ -38,6 +38,7 @@
     <string name="email_prompt">Enter your email address&#58;</string>
     <string name="username">Please enter username (email that was registered)</string>
     <string name="enterusername">Enter username (email that was registered)</string>
+    <string name="WebViewActivity">Web View Activity</string>
 
     <!-- Browse SoundCloud strings -->
     <string name="browse">Browse</string>

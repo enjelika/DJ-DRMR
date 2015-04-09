@@ -66,6 +66,12 @@ public class Login extends Activity implements OnClickListener{
 		mRegister.setOnClickListener(this);
 		cd = new CheckConnection(getApplicationContext());
 		
+		if(getIntent().getStringExtra("user") != null){
+			String rUser = getIntent().getStringExtra("user");
+			String rPassword = getIntent().getStringExtra("pass");
+			user.setText(rUser);
+			pass.setText(rPassword);
+		}
 	}
 
 	@Override

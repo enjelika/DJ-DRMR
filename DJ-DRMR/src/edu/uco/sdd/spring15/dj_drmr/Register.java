@@ -2,12 +2,17 @@ package edu.uco.sdd.spring15.dj_drmr;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import edu.uco.sdd.spring15.dj_drmr.WebViewActivity;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,6 +31,7 @@ public class Register extends Activity implements OnClickListener{
 	
 	private EditText user, pass;
 	private Button  mRegister;
+	private boolean userCreated = false;
 	
 	 // Progress Dialog
     private ProgressDialog pDialog;
@@ -61,7 +67,18 @@ public class Register extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		
 				new CreateUser().execute();
-		
+				if(userCreated)
+				{
+					Intent i = new Intent(this, WebViewActivity.class);
+					i.putExtra("user", user.getText());
+					i.putExtra("pass" , pass.getText());
+					startActivity(i);
+				}
+				/*else{
+					user.setText("");
+					pass.setText("");
+				}*/
+				
 	}
 	
 	class CreateUser extends AsyncTask<String, String, String> {
@@ -106,13 +123,14 @@ public class Register extends Activity implements OnClickListener{
                 // json success element
                 success = json.getInt(TAG_SUCCESS);
                 if (success == 1) {
+                	userCreated = true;
                 	Log.d("User Created!", json.toString());              	
                 	finish();
                 	return json.getString(TAG_MESSAGE);
                 }else{
+                	userCreated = false;
                 	Log.d("Login Failure!", json.getString(TAG_MESSAGE));
                 	return json.getString(TAG_MESSAGE);
-                	
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

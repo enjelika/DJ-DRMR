@@ -55,7 +55,10 @@
             android:name=".ReadComments"
             android:label="@string/read_comments">
         </activity>
-        
+        <activity
+            android:name=".WebViewActivity"
+            android:label="@string/WebViewActivity">
+        </activity>
         <service
             android:name="edu.uco.sdd.spring15.dj_drmr.stream.MediaPlayerService"
             android:enabled="true" />
