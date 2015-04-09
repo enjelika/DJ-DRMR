@@ -26,6 +26,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -1117,13 +1118,30 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 
 	@Override
 	public void onSearchDialogPositiveClick(DialogFragment dialog) {
-		// TODO Auto-generated method stub
+		// get the search params from the dialog
+		Dialog dialogView = dialog.getDialog();
+		EditText txt_artist = (EditText) dialogView.findViewById(R.id.search_info_artist);
+		EditText txt_keyword= (EditText) dialogView.findViewById(R.id.search_info_keyword);
 		
+		// replace the current fragment with the browse fragment
+		BrowseFragment browseFragment = new BrowseFragment();
+		Bundle args = new Bundle();
+		args.putString("artist", txt_artist.getText().toString());
+		args.putString("keyword", txt_keyword.getText().toString());
+		args.putBoolean("searching", true);
+		browseFragment.setArguments(args);
+		
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+		// Replace whatever is in the fragment_container view with this fragment,
+		// and add the transaction to the back stack so the user can navigate back
+		transaction.replace(R.id.container, browseFragment);
+		transaction.addToBackStack(null);
+		transaction.commit();
 	}
 
 	@Override
 	public void onSearchDialogNegativeClick(DialogFragment dialog) {
-		// TODO Auto-generated method stub
-		
+		// cancel button clicked - do nothing
 	}
 }
