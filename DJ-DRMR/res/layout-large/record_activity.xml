@@ -12,7 +12,7 @@
         android:layout_width="400dp"
         android:layout_height="125dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="70sp"
         android:layout_marginTop="55dp"
         android:background="@drawable/border"
         android:orientation="horizontal"
@@ -32,7 +32,8 @@
         android:id="@+id/recording_btn_tray"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_below="@id/title"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/border"
         android:orientation="horizontal"
         android:padding="10dp" >
@@ -75,21 +76,24 @@
     <ProgressBar
         android:id="@+id/record_progressBar"
         style="?android:attr/progressBarStyleHorizontal"
+        android:background="@android:color/transparent"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/recording_btn_tray"
-        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:layout_margin="10dp"
-        android:layout_marginTop="21dp"
         android:max="4000"
         android:progressDrawable="@drawable/progressbar" />
     
     <ListView
         android:id="@+id/record_songs"
+        android:background="@drawable/border"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/record_progressBar" >
-    </ListView>
-
+        android:layout_height="380sp"
+        android:padding="10sp"
+        android:layout_margin="30sp"
+        android:layout_alignParentBottom="true"
+        android:divider="#323232"
+	    android:dividerHeight="1dp"
+	    android:scrollbars="vertical" />
+    
 </RelativeLayout>

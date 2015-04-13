@@ -69,6 +69,7 @@
         android:layout_margin="10dp"
         android:layout_below="@id/btnUpload"
         android:hint="@string/tags"
+        android:textStyle="bold"
         android:textColor="#DAA520"
         android:textSize="20pt"
         android:inputType="text" />

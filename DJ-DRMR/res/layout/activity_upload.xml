@@ -66,6 +66,9 @@
         android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/btnUpload"
+        android:textSize="10pt"
+        android:textStyle="bold"
+        android:textColor="#DAA520"
         android:hint="@string/newName"
         />
     
