@@ -28,7 +28,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	private IMediaPlayerServiceClient mClient;
 	private final Binder mBinder = new MediaPlayerBinder();
 	private ArrayList<SoundcloudResource> resourceList = null;
-	private int trackIndex = -1;
+	private int trackIndex = 0;
 	
 	private boolean paused=false;
 	
@@ -195,12 +195,14 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	}
 	
 	public void playPrev() {
-		if (trackIndex-- < 0) trackIndex = resourceList.size()-1;
+		if (--trackIndex < 0) trackIndex = resourceList.size()-1;
 		getNextTrack(trackIndex);
 	}
 	
 	public void playNext() {
-		if (trackIndex++ >= resourceList.size()) trackIndex = 0;
+		if (++trackIndex >= resourceList.size()) {
+			trackIndex = 0;
+		}
 		getNextTrack(trackIndex);
 	}
 	

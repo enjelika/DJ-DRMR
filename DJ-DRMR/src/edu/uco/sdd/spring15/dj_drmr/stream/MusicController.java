@@ -9,9 +9,13 @@ public class MusicController extends MediaController {
 		super(c);
 	}
 
-//	@Override
-//	public void hide() {
-//		// TODO: nothing here (keeps the controller from hiding automatically)
-////		super.hide();
-//	}
+	@Override
+	public void hide() {
+		// TODO: nothing here (keeps the controller from hiding automatically)
+//		super.hide();
+	}
+	
+	public void makeItGoAway() {
+		super.hide();
+	}
 }

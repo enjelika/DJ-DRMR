@@ -52,6 +52,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -60,6 +61,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.MediaController.MediaPlayerControl;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -341,8 +343,8 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
         private MusicController mController;
         private boolean playbackPaused;
         // search variables
-        private String artist, keyword;
-        private boolean searching = false;
+        private String paramStr;
+        private boolean searching = false, byArtist = false;
 		
 		/**
 		 * The fragment argument representing the section number for this
@@ -370,20 +372,21 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			View rootView = inflater.inflate(R.layout.browse_activity, container,
 					false);
 			
-			// if args are present,
-			Bundle args = this.getArguments();
-			if (args != null) {
-				artist = args.getString("artist");
-				keyword = args.getString("keyword");
-				searching = args.getBoolean("searching");
-			}
-			
 			res = getResources();
 			genres = res.getStringArray(R.array.soundcloud_genres);
 			//btnPlayPause = (ToggleButton) rootView.findViewById(R.id.btnPlayPause);
 			lvGenres = (ListView) rootView.findViewById(R.id.genreList);
-			initialize();
+			
+			// if args are present,
+			Bundle args = this.getArguments();
+			if (args != null) {
+				paramStr = args.getString("searchTerm");
+				searching = args.getBoolean("searching");
+				byArtist = args.getBoolean("byArtist");
+			}
+
 			bindToService();
+			initialize();
 			
 			return rootView;
 		}
@@ -392,17 +395,19 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		public void onResume() {
 			super.onResume();
 			if (bound && mService.isPaused()) {
-				setController();
-			}
-			
-			if (searching) {
-				doSearch();
+				mController.show(0);
 			}
 		}
 		
 		@Override
+		public void onPause() {
+			mController.makeItGoAway();
+			super.onPause();
+		}
+		
+		@Override
 		public void onStop() {
-			mController.hide();
+//			mController.hide();
 			super.onStop();
 		}
 
@@ -433,6 +438,10 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	
 	            // set the mediacontroller
 	            setController();
+	            
+				if (searching) {
+					doSearch();
+				}
 	        }
 	 
 	        @Override
@@ -499,10 +508,57 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	    }
 	    
 	    private void doSearch() {
-	    	String message = "search for artist: " + artist +
-					", keyword: " + keyword;
-			Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT)
-				.show();
+	    	// make search url and pull soundcloud data
+			String searchUrl;
+			if (!paramStr.isEmpty()) {
+				paramStr = paramStr.replace(" ", "%20");
+				searchUrl = "/tracks?client_id=" + res.getString(R.string.client_id) + "&q=" + paramStr;
+				Log.d("BrowseFragment", "search url = " + searchUrl);
+				getTracksFromSoundcloud(searchUrl);
+			} else {
+				// error - empty param string
+				String message = res.getString(R.string.empty_search);
+				Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT)
+					.show();
+			}
+	    }
+	    
+	    private void getTracksFromSoundcloud(String url) {
+	    	SoundcloudResource tracklist = new SoundcloudResource(url);
+			tracklist.setType(SoundcloudResource.RESOURCE_TYPE_QUERY_RESULT); // a list of tracks
+			tracklist.pullData(); // get result from soundcloud
+			while (!tracklist.hasData()) { /* wait for data */ }
+			String result = tracklist.getSoundcloudData();
+			try {
+				JSONArray json = new JSONArray(result);
+				resourceList = new ArrayList<SoundcloudResource>();
+				for (int i = 0; i < json.length(); i++) {
+					JSONObject object = json.getJSONObject(i);
+					if (object.getBoolean("streamable")) {
+						// only parse streamable tracks
+						String title = object.getString("title").toString();
+						String artist = object.getJSONObject("user").getString("username").toString();
+						String streamUrl = object.getString("stream_url").toString();
+						SoundcloudResource scr = new SoundcloudResource(streamUrl);
+						scr.setType(SoundcloudResource.RESOURCE_TYPE_TRACK);
+						scr.setTitle(title);
+						scr.setArtist(artist);
+						resourceList.add(scr);
+					}
+				}
+				// debug
+	//			Log.d("BrowseActivity", "resourceList == null? " + (resourceList==null)+"");
+				
+				//pass to fragment - Debra
+				TrackResultsFragment t = new TrackResultsFragment();
+				Bundle bundle = new Bundle();
+				bundle.putParcelableArrayList("results", resourceList);
+				t.setArguments(bundle);
+				t.show(getFragmentManager(), result);
+			} catch (JSONException e) {
+				Log.e("BrowseFragment", "JSONException when parsing soundcloud data");
+				e.printStackTrace();
+			}
 	    }
 		    
 	    private boolean MediaPlayerServiceRunning() {
@@ -1120,14 +1176,17 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 	public void onSearchDialogPositiveClick(DialogFragment dialog) {
 		// get the search params from the dialog
 		Dialog dialogView = dialog.getDialog();
-		EditText txt_artist = (EditText) dialogView.findViewById(R.id.search_info_artist);
-		EditText txt_keyword= (EditText) dialogView.findViewById(R.id.search_info_keyword);
+		EditText txt_search = (EditText) dialogView.findViewById(R.id.search_info_param);
+
+    	// close the $&*#!*$% keyboard
+    	InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//    	imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+    	imm.hideSoftInputFromWindow(txt_search.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 		
 		// replace the current fragment with the browse fragment
 		BrowseFragment browseFragment = new BrowseFragment();
 		Bundle args = new Bundle();
-		args.putString("artist", txt_artist.getText().toString());
-		args.putString("keyword", txt_keyword.getText().toString());
+		args.putString("searchTerm", txt_search.getText().toString());
 		args.putBoolean("searching", true);
 		browseFragment.setArguments(args);
 		
@@ -1135,7 +1194,7 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 
 		// Replace whatever is in the fragment_container view with this fragment,
 		// and add the transaction to the back stack so the user can navigate back
-		transaction.replace(R.id.container, browseFragment);
+		transaction.replace(R.id.container, browseFragment, "BrowseFragment");
 		transaction.addToBackStack(null);
 		transaction.commit();
 	}

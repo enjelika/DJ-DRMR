@@ -5,16 +5,10 @@
     android:orientation="vertical" >
 
     <EditText
-        android:id="@+id/search_info_artist"
+        android:id="@+id/search_info_param"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"        
-        android:hint="@string/record_artist"
-        android:inputType="text" />
-    <EditText
-        android:id="@+id/search_info_keyword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"        
-        android:hint="@string/search_keyword"
+        android:hint="@string/search_terms"
         android:inputType="text" />
 
 

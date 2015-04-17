@@ -45,7 +45,10 @@
     <string name="browseSound">Browse SoundCloud</string>
     <string name="example">Example application</string>
     <string name="search">Search</string>
-    <string name="search_keyword">Keyword</string>
+    <string name="search_terms">what do you want to hear?</string>
+    <string name="search_by_artist">search by Soundcloud user</string>
+    <string name="search_by_keyword">search by keyword</string>
+    <string name="empty_search">No search terms specified</string>
     
     <!-- soundcloud utility strings -->
     <string name="client_id">0724aaed3681642b2c352cea90e79297</string>
