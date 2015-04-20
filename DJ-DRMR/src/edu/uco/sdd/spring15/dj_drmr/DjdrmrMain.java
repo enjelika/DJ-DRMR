@@ -2,7 +2,10 @@ package edu.uco.sdd.spring15.dj_drmr;
 
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +55,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -61,7 +63,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.MediaController.MediaPlayerControl;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -935,6 +936,7 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 		private Button btUpload;
 		private Song song;
 		private EditText newName;
+		private User user;
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -971,11 +973,24 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 				@Override
 				public void onClick(View v) {
 					song.setTags(editTextTags.getText().toString());
+					FileInputStream fis;
+					try {
+						fis = getActivity().getApplication().openFileInput("CREDENTIALS");
+						ObjectInputStream is = new ObjectInputStream(fis);
+						user = (User) is.readObject();
+						is.close();
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
 	                	new Thread(new Runnable() {
 		                	public void run() {
 			                	try {
 			                		ApiWrapper wrapper = new ApiWrapper(SoundcloudResource.CLIENT_ID, SoundcloudResource.CLIENT_SECRET,  null,  null);
-									Token token = wrapper.login("renan.kub@gmail.com", "soundcloud");
+									Token token = wrapper.login(user.getName(), user.getPassword());
 									song.getSong().setReadable(true, false);
 									HttpResponse resp = wrapper.post(Request.to(Endpoints.TRACKS)
 											 .add(Params.Track.TITLE, song.getName())

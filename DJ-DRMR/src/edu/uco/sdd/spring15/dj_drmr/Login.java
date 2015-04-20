@@ -1,5 +1,9 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +14,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
@@ -117,6 +122,20 @@ public class Login extends Activity implements OnClickListener{
             int success;
             String username = user.getText().toString();
             String password = pass.getText().toString();
+            
+            User user = new User(username, password);
+            
+            try {
+				FileOutputStream fos = openFileOutput("CREDENTIALS", Context.MODE_PRIVATE);
+				ObjectOutputStream os = new ObjectOutputStream(fos);
+				os.writeObject(user);
+				os.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+            
             try {
                 // Building Parameters
                 List<NameValuePair> params = new ArrayList<NameValuePair>();
