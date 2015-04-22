@@ -202,9 +202,7 @@ public class Login extends Activity implements OnClickListener{
             	toast.setDuration(Toast.LENGTH_LONG);
             	toast.setView(layout);
             	toast.show();
-            	//Toast.makeText(Register.this, file_url, Toast.LENGTH_LONG).show();
             }
         }	
-	}
-		 
+	}		 
 }
