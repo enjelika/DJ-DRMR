@@ -8,6 +8,7 @@
     <string name="action_example">Search</string>
     <string name="animation">Splash Screen Animation</string>
     <string name="welcome_txt">Welcome&#33;</string>
+    <string name="genreListLabel">Choose a genre&#58;</string>
     
     <!-- Navigation Drawer -->
     <string name="title_section1">Welcome</string>
