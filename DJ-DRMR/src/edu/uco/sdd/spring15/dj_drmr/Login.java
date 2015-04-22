@@ -86,7 +86,18 @@ public class Login extends Activity implements OnClickListener{
 		case R.id.login:
 			isInternetPresent = cd.isConnectingToInternet();
 			if(!isInternetPresent){
-				Toast.makeText(getApplicationContext(), "You don't have internet connection. Please connect to the internet", Toast.LENGTH_SHORT).show();
+				LayoutInflater inflater = getLayoutInflater();
+	            View layout = inflater.inflate(R.layout.custom_toast, 
+	            							   (ViewGroup) findViewById(R.id.toast_layout_root));
+	            
+	            TextView text = (TextView) layout.findViewById(R.id.toast_txt);
+	            text.setText("You don't have internet connection. Please connect to the internet");
+	            
+	            Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.CENTER, 0, 0);
+            	toast.setDuration(Toast.LENGTH_SHORT);
+            	toast.setView(layout);
+            	toast.show();
 			}else new AttemptLogin().execute();
 			break;
 		case R.id.register:
