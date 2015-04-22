@@ -26,7 +26,7 @@
 		    android:layout_height="80dp"
 		    android:layout_width="240dp"
 		    android:layout_gravity="center"
-		    android:layout_marginBottom="25dp"
+		    android:layout_marginBottom="15dp"
 		    android:orientation="horizontal">
 			    
 			<ImageView
@@ -39,6 +39,16 @@
 			    android:src="@drawable/title" />
 			    
 		</LinearLayout>
+		
+	    <TextView 
+	        android:id="@+id/genreListLabel"
+	        android:background="@android:color/transparent"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="10pt"
+        	android:textStyle="bold"
+        	android:textColor="#DAA520"
+        	android:text="@string/genreListLabel" />"
  
 	    <ListView 
 		   	android:id="@+id/genreList"
