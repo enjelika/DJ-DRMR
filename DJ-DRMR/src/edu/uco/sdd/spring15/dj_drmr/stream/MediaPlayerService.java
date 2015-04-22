@@ -17,6 +17,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain;
+import edu.uco.sdd.spring15.dj_drmr.NotificationPanel;
 import edu.uco.sdd.spring15.dj_drmr.stream.StateMediaPlayer.MPlayerStates;
 
 
@@ -29,6 +30,8 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	private final Binder mBinder = new MediaPlayerBinder();
 	private ArrayList<SoundcloudResource> resourceList = null;
 	private int trackIndex = 0;
+	private String currentTrackTitle;
+	NotificationPanel nPanel;
 	
 	private boolean paused=false;
 	
@@ -46,6 +49,15 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	
 	public StateMediaPlayer getMediaPlayer() {
 		return mp;
+	}
+	
+	public String getCurrentTrackTitle() {
+		return resourceList.get(trackIndex).getTitle();
+	}
+	
+	public void registerNotification(NotificationPanel panel) {
+		this.nPanel = panel;
+		nPanel.registerService(this);
 	}
 	
 	// initialize the media player given a soundcloud resource object
@@ -95,6 +107,9 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 		while (!resource.hasData()) { /* wait for data */ }
 		String url = resource.getResourceUrl();
 		initializeMediaPlayer(url);
+		if (nPanel != null) {
+			nPanel.setSongTitle(resourceList.get(index).getTitle());
+		}
 	}
 	
 	@Override
@@ -135,22 +150,24 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	@SuppressWarnings("deprecation")
 	public void startMediaPlayer() {
 		
-		//set to foreground
-        Intent notificationIntent = new Intent(this, DjdrmrMain.class);
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setContentIntent(pendingIntent)
-        		.setSmallIcon(R.drawable.btn_radio)
-        		.setTicker(resourceList.get(trackIndex).getTitle())
-        		.setOngoing(true)
-        		.setContentTitle("playing")
-        		.setContentText(resourceList.get(trackIndex).getTitle());
-        Notification notification = builder.build();
- 
-        // TODO: make notification into a controller
-        startForeground(1, notification);
+//		//set to foreground
+//        Intent notificationIntent = new Intent(this, DjdrmrMain.class);
+//        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        
+//        nPanel = new NotificationPanel(this);
+//        
+//        Notification.Builder builder = new Notification.Builder(this);
+//        builder.setContentIntent(pendingIntent)
+//        		.setSmallIcon(R.drawable.btn_radio)
+//        		.setTicker(resourceList.get(trackIndex).getTitle())
+//        		.setOngoing(true)
+//        		.setContentTitle("playing")
+//        		.setContentText(resourceList.get(trackIndex).getTitle());
+//        Notification notification = builder.build();
+// 
+//        // TODO: make notification into a controller
+//        startForeground(1, notification);
  
         Log.d("MediaPlayerService","startMediaPlayer() called");
         mp.start();

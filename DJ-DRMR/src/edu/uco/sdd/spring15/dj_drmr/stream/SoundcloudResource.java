@@ -6,13 +6,16 @@ package edu.uco.sdd.spring15.dj_drmr.stream;
 //import java.io.InputStreamReader;
 
 //import org.apache.http.HttpEntity;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -20,6 +23,11 @@ import android.util.Log;
 import com.soundcloud.api.ApiWrapper;
 import com.soundcloud.api.Http;
 import com.soundcloud.api.Request;
+import com.soundcloud.api.Token;
+import com.soundcloud.api.examples.CreateWrapper;
+
+import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain;
+import edu.uco.sdd.spring15.dj_drmr.OAuth2Fragment;
 
 public class SoundcloudResource implements Parcelable {
 
@@ -38,7 +46,7 @@ public class SoundcloudResource implements Parcelable {
 	public static int RESOURCE_TYPE_QUERY_RESULT = 6;
 	
 	// the Soundcloud wrapper (for HTTP talking to Soundcloud)
-	private ApiWrapper wrapper;
+//	private File wrapperFile = new File(Environment.getExternalStorageDirectory(), "wrapper.ser");
 	
 	// instance vars for the individual resource
 	private int type;
@@ -49,21 +57,17 @@ public class SoundcloudResource implements Parcelable {
 	private String soundcloudData = "none";
 	private boolean hasData;
 	
+	private Token token;
+	
 	public SoundcloudResource() {
-		this(null);
+		this(null, null, null);
 	}
 	
-	public SoundcloudResource(String url) {
-		URI redirect = null;
-		try {
-			redirect = new URI(REDIRECT_URI_STRING);
-		} catch (URISyntaxException e) {
-			// invalid URI format
-			e.printStackTrace();
-		}
-		wrapper = new ApiWrapper(CLIENT_ID, CLIENT_SECRET, redirect, null);
+	public SoundcloudResource(String url, String tokenAccess, String tokenRefresh) {
 		this.resourceUrl = url;
 		hasData = false;
+		this.token = new Token(tokenAccess, tokenRefresh, "non-expiring");
+		Log.d("SoundcloudResource", "access = " + token.access + ", refresh = " + token.refresh);
 	}
 	
 	public int getType() {
@@ -117,13 +121,16 @@ public class SoundcloudResource implements Parcelable {
 		@Override
 		protected Void doInBackground(Void... params) {
 			hasData = false;
+			ApiWrapper wrapper;
 			try {
-				wrapper.login("melicentking@gmail.com", "DjDrmrIsAwesom3!@");
-			} catch (Exception e) {
-				Log.e("SoundcloudResource", "login error");
-				e.printStackTrace();
-			}
-			try {
+				URI redirect = null;
+				try {
+					redirect = new URI(REDIRECT_URI_STRING);
+				} catch (URISyntaxException e) {
+					// invalid URI format
+					e.printStackTrace();
+				}
+			    wrapper = new ApiWrapper(CLIENT_ID, CLIENT_SECRET, redirect, token);
 				HttpResponse response = wrapper.get(Request.to(resourceUrl));
 				/* below is from soundcloud api example */
 				if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK ||
@@ -136,6 +143,7 @@ public class SoundcloudResource implements Parcelable {
 				}
 			} catch (Exception e) {
 				Log.e("SoundcloudResource", "doInBackground couldn't get httpresponse");
+				e.printStackTrace();
 			}
 			return null;
 		}

@@ -75,6 +75,11 @@
 	<string name="tags">TAGS</string>
 	<string name="newName">New Name</string>
 	
+	<!--  key strings -->
+    <string name="shared_prefs">edu.uco.sdd.spring15.dj_drmr.SHARED_PREFERENCES</string>
+    <string name="token_name">edu.uco.sdd.spring15.dj_drmr.OAUTH_TOKEN</string>
+    <string name="is_logged_out">edu.uco.sdd.spring15.dj_drmr.IS_LOGGED_OUT</string>
+	
 	<!--  SoundCloud Genres -->
 	<string-array name="soundcloud_genres">
 	    <item>Alternative Rock</item>

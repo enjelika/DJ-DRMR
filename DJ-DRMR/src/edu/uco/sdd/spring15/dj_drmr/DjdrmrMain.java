@@ -7,6 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
 import android.media.MediaMetadataRetriever;
@@ -57,6 +61,8 @@ import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -75,6 +81,7 @@ import com.soundcloud.api.Endpoints;
 import com.soundcloud.api.Params;
 import com.soundcloud.api.Request;
 import com.soundcloud.api.Token;
+import com.soundcloud.api.examples.CreateWrapper;
 
 import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment.TrackResultsListener;
 import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment;
@@ -113,6 +120,10 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	private static String record_artist;
 	private static String record_title;
 	
+	// OAuth2
+	public static ApiWrapper wrapper = null;
+	public static File WRAPPER_SER;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -125,7 +136,6 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		
 		//set up the drawer
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,(DrawerLayout) findViewById(R.id.drawer_layout));
-		
 	}
 	
 	@Override
@@ -213,6 +223,18 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			case R.id.action_settings:
 				return true;
 			case R.id.action_logout:
+				SharedPreferences prefs = getSharedPreferences(getResources().getString(R.string.shared_prefs), 0);
+				String access = prefs.getString("access", "");
+			    String refresh = prefs.getString("refresh", "");
+				Token token = new Token(access, refresh, "non-expiring");
+				token.invalidate();
+				CookieSyncManager.createInstance(this);
+				CookieManager cookieMonster = CookieManager.getInstance();
+				cookieMonster.removeAllCookie();
+				Editor edit = prefs.edit();
+				edit.remove("access");
+				edit.remove("refresh");
+				edit.commit();
 				Intent i = new Intent(this, Login.class);
 				startActivity(i);
 			
@@ -276,7 +298,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			
 			// SignUp Activity
 			btnSignUp = (Button) rootView.findViewById(R.id.btnSignUp);
-			btnSignUp.setOnClickListener(new OnClickListener() {
+			btnSignUp.(new OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
@@ -346,6 +368,8 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
         // search variables
         private String paramStr;
         private boolean searching = false, byArtist = false;
+        private SharedPreferences prefs;
+        private NotificationPanel nPanel;
 		
 		/**
 		 * The fragment argument representing the section number for this
@@ -455,8 +479,11 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	    	
 	    	Log.d("BrowseActivity", "initialize");
 	    	
+	    	// hide the %^&*)$ keyboard
 	    	InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 			imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+			
+			prefs = getActivity().getSharedPreferences(res.getString(R.string.shared_prefs), 0);
 	        
 	        final ArrayAdapter<String> genreAdapter = new ArrayAdapter<String>(getActivity(), R.layout.listitem, genres);
 	        lvGenres.setAdapter(genreAdapter);
@@ -468,8 +495,12 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 						int position, long id) {
 					String genre = (String) parent.getItemAtPosition(position);
 					Log.d("BrowseFragment", "genre = " + genre);
+				    String access = prefs.getString("access", "");
+				    String refresh = prefs.getString("refresh", "");
 					SoundcloudResource tracklist = new SoundcloudResource(
-								"/tracks?client_id=" + SoundcloudResource.CLIENT_ID + "&genres=" + genre);
+								"/tracks?client_id=" + SoundcloudResource.CLIENT_ID + "&genres=" + genre,
+								access,
+								refresh);
 					tracklist.setType(SoundcloudResource.RESOURCE_TYPE_QUERY_RESULT); // a list of tracks
 					tracklist.pullData(); // get result from soundcloud
 					while (!tracklist.hasData()) { /* wait for data */ }
@@ -484,7 +515,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 								String title = object.getString("title").toString();
 								String artist = object.getJSONObject("user").getString("username").toString();
 								String url = object.getString("stream_url").toString();
-								SoundcloudResource scr = new SoundcloudResource(url);
+								SoundcloudResource scr = new SoundcloudResource(url, access, refresh);
 								scr.setType(SoundcloudResource.RESOURCE_TYPE_TRACK);
 								scr.setTitle(title);
 								scr.setArtist(artist);
@@ -525,7 +556,9 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	    }
 	    
 	    private void getTracksFromSoundcloud(String url) {
-	    	SoundcloudResource tracklist = new SoundcloudResource(url);
+		    String access = prefs.getString("access", "");
+		    String refresh = prefs.getString("refresh", "");
+	    	SoundcloudResource tracklist = new SoundcloudResource(url, access, refresh);
 			tracklist.setType(SoundcloudResource.RESOURCE_TYPE_QUERY_RESULT); // a list of tracks
 			tracklist.pullData(); // get result from soundcloud
 			while (!tracklist.hasData()) { /* wait for data */ }
@@ -540,7 +573,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 						String title = object.getString("title").toString();
 						String artist = object.getJSONObject("user").getString("username").toString();
 						String streamUrl = object.getString("stream_url").toString();
-						SoundcloudResource scr = new SoundcloudResource(streamUrl);
+						SoundcloudResource scr = new SoundcloudResource(streamUrl, access, refresh);
 						scr.setType(SoundcloudResource.RESOURCE_TYPE_TRACK);
 						scr.setTitle(title);
 						scr.setArtist(artist);
@@ -603,6 +636,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	        getActivity().stopService(intent);
 	        getActivity().finish();
 	 
+	        nPanel.notificationCancel();
 	    }
 
 		@Override
@@ -611,6 +645,10 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				Log.d("BrowseActivity", "onPickTrackClick");
 				resource = resourceList.get(trackIndex);
 				mService.initializeMediaPlayer(resourceList, trackIndex);
+				// set up the notfication panel
+				Log.d("BrowseFragment", "ready to create notification");
+				nPanel = new NotificationPanel(getActivity(), mService.getCurrentTrackTitle());
+				mService.registerNotification(nPanel);
 			}
 		}
 		

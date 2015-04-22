@@ -12,10 +12,15 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.soundcloud.api.Token;
+
+import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain.WelcomeFragment;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,7 +38,7 @@ import android.widget.Toast;
 public class Login extends Activity implements OnClickListener{
 	
 	private EditText user, pass;
-	private Button mSubmit, mRegister;
+	private Button mSubmit/*, mRegister*/;
 	
 	 // Progress Dialog
     private ProgressDialog pDialog;
@@ -50,6 +55,8 @@ public class Login extends Activity implements OnClickListener{
 	
     Boolean isInternetPresent = false;
 	CheckConnection cd;
+	
+	private boolean hasToken = false;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,11 +71,11 @@ public class Login extends Activity implements OnClickListener{
 		
 		//setup buttons
 		mSubmit = (Button)findViewById(R.id.login);
-		mRegister = (Button)findViewById(R.id.register);
+//		mRegister = (Button)findViewById(R.id.register);
 		
 		//register listeners
 		mSubmit.setOnClickListener(this);
-		mRegister.setOnClickListener(this);
+//		mRegister.setOnClickListener(this);
 		cd = new CheckConnection(getApplicationContext());
 		
 		if(getIntent().getStringExtra("user") != null){
@@ -76,6 +83,15 @@ public class Login extends Activity implements OnClickListener{
 			String rPassword = getIntent().getStringExtra("pass");
 			user.setText(rUser);
 			pass.setText(rPassword);
+		}
+		
+		// TODO: check shared prefs for token
+		SharedPreferences prefs = getSharedPreferences(getResources().getString(R.string.shared_prefs), 0);
+		String access = prefs.getString("access", "");
+	    String refresh = prefs.getString("refresh", "");
+		if (access != null && !access.isEmpty()) {
+			Token token = new Token(access, refresh, "non-expiring");
+			hasToken = true;
 		}
 	}
 
@@ -86,19 +102,21 @@ public class Login extends Activity implements OnClickListener{
 		case R.id.login:
 			isInternetPresent = cd.isConnectingToInternet();
 			if(!isInternetPresent){
-				LayoutInflater inflater = getLayoutInflater();
-	            View layout = inflater.inflate(R.layout.custom_toast, 
-	            							   (ViewGroup) findViewById(R.id.toast_layout_root));
-	            
-	            TextView text = (TextView) layout.findViewById(R.id.toast_txt);
-	            text.setText("You don't have internet connection. Please connect to the internet");
-	            
-	            Toast toast = new Toast(getApplicationContext());
-                toast.setGravity(Gravity.CENTER, 0, 0);
-            	toast.setDuration(Toast.LENGTH_SHORT);
-            	toast.setView(layout);
-            	toast.show();
-			}else new AttemptLogin().execute();
+				Toast.makeText(getApplicationContext(), "You don't have internet connection. Please connect to the internet", Toast.LENGTH_SHORT).show();
+			} else { //new AttemptLogin().execute();
+				if (hasToken) {
+					// start the main activity
+					Intent intent2 = new Intent(this, DjdrmrMain.class);
+			        intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			        startActivity(intent2);
+				} else {
+					// open the sign-in dialog
+					FragmentTransaction ft = getFragmentManager().beginTransaction();
+			        ft.addToBackStack(null);
+					OAuth2Fragment newFragment = new OAuth2Fragment();
+			        newFragment.show(ft, "dialog");
+				}
+			}
 			break;
 		case R.id.register:
 				Intent i = new Intent(this, Register.class);
