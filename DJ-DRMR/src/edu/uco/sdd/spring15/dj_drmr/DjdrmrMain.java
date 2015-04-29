@@ -22,6 +22,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -30,6 +31,7 @@ import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -211,7 +213,17 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		switch(id){
-			case R.id.action_settings:
+			case R.id.action_about:
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage(getResources().getString(R.string.about_blurb))
+				       .setCancelable(false)
+				       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				                //do things
+				           }
+				       });
+				AlertDialog alert = builder.create();
+				alert.show();
 				return true;
 			case R.id.action_logout:
 				SharedPreferences prefs = getSharedPreferences(getResources().getString(R.string.shared_prefs), 0);
@@ -1089,7 +1101,17 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 			// automatically handle clicks on the Home/Up button, so long
 			// as you specify a parent activity in AndroidManifest.xml.
 			int id = item.getItemId();
-			if (id == R.id.action_settings) {
+			if (id == R.id.action_about) {
+				AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+				builder.setMessage(getResources().getString(R.string.about_blurb))
+				       .setCancelable(false)
+				       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				           public void onClick(DialogInterface dialog, int id) {
+				                //do things
+				           }
+				       });
+				AlertDialog alert = builder.create();
+				alert.show();
 				return true;
 			}
 			return super.onOptionsItemSelected(item);
