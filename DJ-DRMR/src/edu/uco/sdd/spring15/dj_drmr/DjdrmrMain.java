@@ -1,19 +1,14 @@
+
 package edu.uco.sdd.spring15.dj_drmr;
 
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.http.HttpResponse;
 import org.cmc.music.common.ID3WriteException;
 import org.cmc.music.metadata.IMusicMetadata;
 import org.cmc.music.metadata.MusicMetadata;
@@ -77,11 +72,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.soundcloud.api.ApiWrapper;
-import com.soundcloud.api.Endpoints;
-import com.soundcloud.api.Params;
-import com.soundcloud.api.Request;
 import com.soundcloud.api.Token;
-import com.soundcloud.api.examples.CreateWrapper;
 
 import edu.uco.sdd.spring15.dj_drmr.TrackResultsFragment.TrackResultsListener;
 import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment;
@@ -999,34 +990,23 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 			this.editTextTags = (EditText) rootView.findViewById(R.id.editTextTags);
 			this.btUpload = (Button) rootView.findViewById(R.id.uploadBtn);
 			this.newName = (EditText) rootView.findViewById(R.id.newName);
-			
+			final Activity activity = this.getActivity();
 			this.btUpload.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					song.setTags(editTextTags.getText().toString());
-					FileInputStream fis;
-					try {
-						fis = getActivity().getApplication().openFileInput("CREDENTIALS");
-						ObjectInputStream is = new ObjectInputStream(fis);
-						user = (User) is.readObject();
-						is.close();
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					}
+					
 	                	new Thread(new Runnable() {
 		                	public void run() {
 			                	try {
-			                		ApiWrapper wrapper = new ApiWrapper(SoundcloudResource.CLIENT_ID, SoundcloudResource.CLIENT_SECRET,  null,  null);
-									Token token = wrapper.login(user.getName(), user.getPassword());
+
 									song.getSong().setReadable(true, false);
-									HttpResponse resp = wrapper.post(Request.to(Endpoints.TRACKS)
-											 .add(Params.Track.TITLE, song.getName())
-									            .add(Params.Track.TAG_LIST, song.getTags())
-									            .withFile(Params.Track.ASSET_DATA, song.getSong()));
+									SharedPreferences prefs = activity.getSharedPreferences(getResources().getString(R.string.shared_prefs), 0);
+			        				String access = prefs.getString("access", "");
+			        			    String refresh = prefs.getString("refresh", "");
+			        			    Token token = new Token(access, refresh, "non-expiring");
+									
+			        			    SongDAO.upload(token, song);
 									
 			                		 } catch (IOException e) {
 			     						e.printStackTrace();
@@ -1035,8 +1015,8 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 	                	 }).start();
 	                	 Toast.makeText(getActivity(),"Uploaded Successfully",Toast.LENGTH_SHORT).show();
 	                	newName.setText("");
-    					editTextTags.setText("");
-    					txtFileChose.setText("Choose File");
+						editTextTags.setText("");
+						txtFileChose.setText("Choose File");
 				}
 			});
 			
