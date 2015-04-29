@@ -71,21 +71,28 @@ public class OAuth2Fragment extends DialogFragment {
             @Override
             public void run() {
                 try {
-                    token = wrapper.authorizationCode(code, Token.SCOPE_NON_EXPIRING);
-                    SharedPreferences sharedPreferences = getActivity()
-    	                    .getSharedPreferences(res.getString(R.string.shared_prefs), 0);
-    	            final Editor edit = sharedPreferences.edit();
-    	            edit.putString("access", token.access);
-    	            edit.putString("refresh", token.refresh);
-    	            edit.commit();
-    	            Log.d("OAuth2Fragment", "access = " + token.access + ", refresh = " + token.refresh);
+                	if (code != null) {
+                		token = wrapper.authorizationCode(code, Token.SCOPE_NON_EXPIRING);
+	                    SharedPreferences sharedPreferences = getActivity()
+	    	                    .getSharedPreferences(res.getString(R.string.shared_prefs), 0);
+	    	            final Editor edit = sharedPreferences.edit();
+	    	            edit.putString("access", token.access);
+	    	            edit.putString("refresh", token.refresh);
+	    	            edit.commit();
+	    	            Log.d("OAuth2Fragment", "access = " + token.access + ", refresh = " + token.refresh);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
  
-        Intent intent2 = new Intent(getActivity(), DjdrmrMain.class);
+        Intent intent2;
+        if (token == null) {
+        	intent2 = new Intent(getActivity(), Login.class);
+        } else {
+        	intent2 = new Intent(getActivity(), DjdrmrMain.class);
+        }
         intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent2);
         return;
@@ -103,6 +110,7 @@ public class OAuth2Fragment extends DialogFragment {
 	        public boolean shouldOverrideUrlLoading(WebView view, String url) {
 	            //check if the login was successful and the access token returned
 	            //this test depend of your API
+				Log.e("OAuth2Fragment", "url=" + url);
 	            if (url.contains(SoundcloudResource.REDIRECT_URI_STRING)) {
 	            	// save the token
 	                saveAccessToken(url);
