@@ -369,7 +369,6 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
         private String paramStr;
         private boolean searching = false, byArtist = false;
         private SharedPreferences prefs;
-        private NotificationPanel nPanel;
 		
 		/**
 		 * The fragment argument representing the section number for this
@@ -635,8 +634,6 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	        Intent intent = new Intent(getActivity(), MediaPlayerService.class);
 	        getActivity().stopService(intent);
 	        getActivity().finish();
-	 
-	        nPanel.notificationCancel();
 	    }
 
 		@Override
@@ -645,10 +642,6 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				Log.d("BrowseActivity", "onPickTrackClick");
 				resource = resourceList.get(trackIndex);
 				mService.initializeMediaPlayer(resourceList, trackIndex);
-				// set up the notfication panel
-				Log.d("BrowseFragment", "ready to create notification");
-				nPanel = new NotificationPanel(getActivity(), mService.getCurrentTrackTitle());
-				mService.registerNotification(nPanel);
 			}
 		}
 		
