@@ -39,6 +39,8 @@ public class OAuth2Fragment extends DialogFragment {
     
 	private ApiWrapper wrapper;
 	public static Token token;
+	
+	private boolean loggedIn = false;
  
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,7 @@ public class OAuth2Fragment extends DialogFragment {
 	    	            edit.putString("access", token.access);
 	    	            edit.putString("refresh", token.refresh);
 	    	            edit.commit();
+	    	            setLoggedIn(true);
 	    	            Log.d("OAuth2Fragment", "access = " + token.access + ", refresh = " + token.refresh);
                     }
                 } catch (IOException e) {
@@ -86,7 +89,10 @@ public class OAuth2Fragment extends DialogFragment {
                 }
             }
         }).start();
- 
+        // wait for the runnable to finish - 
+        // added this to keep the login screen from appearing twice
+        while (!loggedIn) { /* wait for login to complete */ }
+        
         Intent intent2;
         if (token == null) {
         	intent2 = new Intent(getActivity(), Login.class);
@@ -96,6 +102,10 @@ public class OAuth2Fragment extends DialogFragment {
         intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent2);
         return;
+    }
+    
+    private void setLoggedIn(boolean loggedIn) {
+    	this.loggedIn = loggedIn;
     }
  
     @Override
