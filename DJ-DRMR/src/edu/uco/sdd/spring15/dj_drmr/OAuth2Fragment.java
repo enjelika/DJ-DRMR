@@ -74,7 +74,7 @@ public class OAuth2Fragment extends DialogFragment {
                 	if (code != null) {
                 		token = wrapper.authorizationCode(code, Token.SCOPE_NON_EXPIRING);
 	                    SharedPreferences sharedPreferences = getActivity()
-	    	                    .getSharedPreferences(res.getString(R.string.shared_prefs), 0);
+	    	                    .getSharedPreferences(getResources().getString(R.string.shared_prefs), 0);
 	    	            final Editor edit = sharedPreferences.edit();
 	    	            edit.putString("access", token.access);
 	    	            edit.putString("refresh", token.refresh);
