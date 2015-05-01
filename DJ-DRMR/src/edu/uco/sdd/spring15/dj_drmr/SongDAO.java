@@ -14,7 +14,7 @@ public class SongDAO {
 		 ApiWrapper wrapper = new ApiWrapper(SoundcloudResource.CLIENT_ID, SoundcloudResource.CLIENT_SECRET,  null,  token);
 		 song.getSong().setReadable(true, false);
 		 wrapper.post(Request.to(Endpoints.TRACKS)
-         .add(Params.Track.TITLE, title + ".mp3")
+         .add(Params.Track.TITLE, title)
          .add(Params.Track.TAG_LIST, song.getTags())
          .withFile(Params.Track.ASSET_DATA, song.getSong()));
 	}
