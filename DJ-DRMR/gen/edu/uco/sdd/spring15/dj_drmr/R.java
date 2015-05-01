@@ -48,9 +48,9 @@ public final class R {
         public static final int title=0x7f02000c;
     }
     public static final class id {
+        public static final int action_about=0x7f09002f;
         public static final int action_logout=0x7f090030;
         public static final int action_search=0x7f090031;
-        public static final int action_settings=0x7f09002f;
         public static final int animation=0x7f090028;
         public static final int browse_menu=0x7f090007;
         public static final int btnBrowse=0x7f090013;
@@ -132,9 +132,12 @@ public final class R {
         public static final int DJ=0x7f05000e;
         public static final int DRMR=0x7f05000f;
         public static final int WebViewActivity=0x7f05001f;
+        /**  about 
+         */
+        public static final int about_blurb=0x7f05003d;
+        public static final int action_about=0x7f050002;
         public static final int action_example=0x7f050004;
         public static final int action_logout=0x7f050003;
-        public static final int action_settings=0x7f050002;
         public static final int animation=0x7f050005;
         public static final int app_name=0x7f050000;
         /**  Browse SoundCloud strings 

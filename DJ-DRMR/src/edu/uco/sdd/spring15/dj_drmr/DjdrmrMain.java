@@ -971,6 +971,8 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 		private Song song;
 		private EditText newName;
 		private User user;
+		private String fileName;
+		private String extension;
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -1018,7 +1020,7 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 			        			    String refresh = prefs.getString("refresh", "");
 			        			    Token token = new Token(access, refresh, "non-expiring");
 									
-			        			    SongDAO.upload(token, song);
+			        			    SongDAO.upload(token, song, newName.getText().toString());
 									
 			                		 } catch (IOException e) {
 			     						e.printStackTrace();
@@ -1082,8 +1084,11 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 			if (resultCode == Activity.RESULT_OK) {  
 		        Uri uri = data.getData();
 		        String path = uri.getPath();
+		        
 		        File input = new File(path);
-		        this.song = new Song(input, this.newName.getText().toString());
+		        
+		        //this.song = new Song(input, this.newName.getText().toString());
+		        this.song = new Song(input, path);
 		        txtFileChose.setText(input.getName());
 		    }           
 		    super.onActivityResult(requestCode, resultCode, data);
