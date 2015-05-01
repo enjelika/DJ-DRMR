@@ -40,7 +40,7 @@ public class OAuth2Fragment extends DialogFragment {
 	private ApiWrapper wrapper;
 	public static Token token;
 	
-	private boolean loggedIn = false;
+	private boolean loggedIn = false, loginCancelled = false;
  
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,7 +91,7 @@ public class OAuth2Fragment extends DialogFragment {
         }).start();
         // wait for the runnable to finish - 
         // added this to keep the login screen from appearing twice
-        while (!loggedIn) { /* wait for login to complete */ }
+        while (!loggedIn && !loginCancelled) { /* wait for login to complete */ }
         
         Intent intent2;
         if (token == null) {
@@ -123,6 +123,9 @@ public class OAuth2Fragment extends DialogFragment {
 				Log.e("OAuth2Fragment", "url=" + url);
 	            if (url.contains(SoundcloudResource.REDIRECT_URI_STRING)) {
 	            	// save the token
+	            	if (url.contains("denied+the+request")) {
+	            		loginCancelled = true;
+	            	}
 	                saveAccessToken(url);
 	                return true;
 	            } else {
