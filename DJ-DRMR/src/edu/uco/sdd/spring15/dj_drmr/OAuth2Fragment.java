@@ -1,16 +1,12 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import com.soundcloud.api.ApiWrapper;
 import com.soundcloud.api.Endpoints;
 import com.soundcloud.api.Token;
-import com.soundcloud.api.examples.CreateWrapper;
-import com.soundcloud.api.examples.GetResource;
 
 import edu.uco.sdd.spring15.dj_drmr.stream.SoundcloudResource;
 import android.app.DialogFragment;
@@ -19,9 +15,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
