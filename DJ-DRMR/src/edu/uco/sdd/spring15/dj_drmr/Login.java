@@ -1,30 +1,13 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.soundcloud.api.Token;
 
-import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain.WelcomeFragment;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,25 +22,20 @@ public class Login extends Activity implements OnClickListener{
 	
 	private EditText user, pass;
 	private Button mSubmit/*, mRegister*/;
-	
-	 // Progress Dialog
-    private ProgressDialog pDialog;
  
     // JSON parser class
     JSONParser jsonParser = new JSONParser();
     
-  
-    private static final String LOGIN_URL = "http://www.raybvisions.com/webservice/login.php";
-    
-    //JSON element ids from repsonse of php script:
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
+    //Custom Toast variables
+    private Toast toast;
+    private TextView text;    
 	
     Boolean isInternetPresent = false;
 	CheckConnection cd;
 	
 	private boolean hasToken = false;
     
+	@SuppressWarnings("unused")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -65,13 +43,22 @@ public class Login extends Activity implements OnClickListener{
 		setContentView(R.layout.login);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		
+		//Custom Toast
+		LayoutInflater inflater = getLayoutInflater();
+		View layout = inflater.inflate(R.layout.custom_toast, 
+									   (ViewGroup) findViewById(R.id.toast_layout_root));
+		
+		text = (TextView) layout.findViewById(R.id.toast_txt);
+		toast = new Toast(getBaseContext());
+		toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+		toast.setDuration(Toast.LENGTH_LONG);
+		toast.setView(layout);
+		
 		//setup buttons
 		mSubmit = (Button)findViewById(R.id.login);
-//		mRegister = (Button)findViewById(R.id.register);
 		
 		//register listeners
 		mSubmit.setOnClickListener(this);
-//		mRegister.setOnClickListener(this);
 		cd = new CheckConnection(getApplicationContext());
 		
 		if(getIntent().getStringExtra("user") != null){
@@ -98,7 +85,11 @@ public class Login extends Activity implements OnClickListener{
 		case R.id.login:
 			isInternetPresent = cd.isConnectingToInternet();
 			if(!isInternetPresent){
-				Toast.makeText(getApplicationContext(), "You don't have internet connection. Please connect to the internet", Toast.LENGTH_SHORT).show();
+				String message = "You don't have internet connection. Please connect to the internet";
+				text.setText(message);
+				toast.setDuration(Toast.LENGTH_LONG);
+				toast.show();
+//				Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
 			} else { //new AttemptLogin().execute();
 				if (hasToken) {
 					// start the main activity

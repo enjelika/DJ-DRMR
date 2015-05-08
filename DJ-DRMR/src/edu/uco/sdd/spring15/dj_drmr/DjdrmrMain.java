@@ -1,6 +1,4 @@
-
 package edu.uco.sdd.spring15.dj_drmr;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -48,6 +47,7 @@ import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.text.format.Time;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -255,13 +255,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class WelcomeFragment extends Fragment {
-		private Button btnBrowse;
-		private Button btnRecord;
-		private Button btnLogin;
-		private Button btnSignUp;
-		private Button btnUpload;
-		
+	public static class WelcomeFragment extends Fragment {		
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
@@ -287,62 +281,6 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.fragment_welcome, container,
 					false);
-			/*
-			// Login Activity
-			btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
-			btnLogin.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(getActivity(), Login.class);	
-					startActivity(intent);
-				}
-			});
-			
-			// SignUp Activity
-			btnSignUp = (Button) rootView.findViewById(R.id.btnSignUp);
-			btnSignUp.(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(getActivity(), Register.class);	
-					startActivity(intent);
-				}
-			});
-			
-			// Browse Activity
-			btnBrowse = (Button) rootView.findViewById(R.id.btnBrowse);
-			btnBrowse.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(getActivity(), BrowseActivity.class);	
-					startActivity(intent);
-				}
-			});
-			
-			// Record Activity
-			btnRecord = (Button) rootView.findViewById(R.id.btnRecord);
-			btnRecord.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(getActivity(), RecordActivity.class);
-					startActivity(intent);
-				}
-			});
-			
-			// Upload Activity
-			btnUpload = (Button) rootView.findViewById(R.id.btnUpload);
-			btnUpload.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(getActivity(), UploadActivity.class);	
-					startActivity(intent);
-				}
-			});
-			*/
 			return rootView;
 		}
 
@@ -357,20 +295,28 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	public static class BrowseFragment extends Fragment implements IMediaPlayerServiceClient, TrackResultsListener, 
 																	OnClickListener, MediaPlayerControl, SearchListener {
 		
+		@SuppressWarnings("unused")
 		private StateMediaPlayer mp = null;
 		private MediaPlayerService mService;
+		@SuppressWarnings("unused")
 		private SoundcloudResource resource = null;
 		private ArrayList<SoundcloudResource> resourceList;
 		private boolean bound;
 		private Resources res;
 		private String genres[];
-		//private ToggleButton btnPlayPause;
         private ListView lvGenres;
         private MusicController mController;
         private boolean playbackPaused;
+        
+        //Custom Toast variables
+        private Toast toast;
+        private View layout;
+        private TextView text;
+        
         // search variables
         private String paramStr;
-        private boolean searching = false, byArtist = false;
+        @SuppressWarnings("unused")
+		private boolean searching = false, byArtist = false;
         private SharedPreferences prefs;
 		
 		/**
@@ -401,9 +347,19 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			
 			res = getResources();
 			genres = res.getStringArray(R.array.soundcloud_genres);
-			//btnPlayPause = (ToggleButton) rootView.findViewById(R.id.btnPlayPause);
 			lvGenres = (ListView) rootView.findViewById(R.id.genreList);
 			
+			//custom Toast
+			layout = inflater.inflate(R.layout.custom_toast, 
+									  (ViewGroup)rootView.findViewById(R.id.toast_layout_root));
+			
+			text = (TextView) layout.findViewById(R.id.toast_txt);
+			
+			toast = new Toast(getActivity());
+			toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+			toast.setDuration(Toast.LENGTH_LONG);
+			toast.setView(layout);
+						
 			// if args are present,
 			Bundle args = this.getArguments();
 			if (args != null) {
@@ -552,8 +508,10 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			} else {
 				// error - empty param string
 				String message = res.getString(R.string.empty_search);
-				Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT)
-					.show();
+				
+				//Custom Toast
+				text.setText(message);
+				toast.show();
 			}
 	    }
 	    
@@ -757,11 +715,6 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		@Override
 		public void onSearchDialogPositiveClick(DialogFragment dialog) {
 			// TODO 
-			// get search params from bundle
-//			String message = "search for artist: " + txt_artist.getText().toString() +
-//					", keyword: " + txt_keyword.getText().toString();
-//			Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT)
-//				.show();
 		}
 
 		@Override
@@ -860,6 +813,7 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 					ARG_SECTION_NUMBER));
 		}
 		
+		@SuppressLint("DefaultLocale")
 		private void bindSongsToListView(File musicFolder) {
 			songs = new ArrayList<RecordSong>();
 			ArrayList<Map<String, String>> songsMap = new ArrayList<Map<String, String>>();
@@ -970,14 +924,21 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 		private Button btUpload;
 		private Song song;
 		private EditText newName;
+		@SuppressWarnings("unused")
 		private User user;
-		private String fileName;
-		private String extension;
+		//private String fileName;
+		
+		//Custom Toast variables
+        private Toast toast;
+        private View layout;
+        private TextView text;
+		
 		/**
 		 * The fragment argument representing the section number for this
 		 * fragment.
 		 */
 		private static final String ARG_SECTION_NUMBER = "section_number";
+		
 
 		/**
 		 * Returns a new instance of this fragment for the given section number.
@@ -998,6 +959,15 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 				Bundle savedInstanceState) {
 			View rootView = inflater.inflate(R.layout.activity_upload, container,
 					false);
+			
+			//custom Toast
+			layout = inflater.inflate(R.layout.custom_toast, 
+									  (ViewGroup)rootView.findViewById(R.id.toast_layout_root));
+			text = (TextView) layout.findViewById(R.id.toast_txt);
+			toast = new Toast (getActivity());
+			toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+			toast.setDuration(Toast.LENGTH_LONG);
+			toast.setView(layout);
 			
 			this.btChoose = (Button) rootView.findViewById(R.id.btnUpload);
 			this.txtFileChose = (TextView) rootView.findViewById(R.id.txtFileChose);
@@ -1027,7 +997,13 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 			     					}
 			                	}
 	                	 }).start();
-	                	 Toast.makeText(getActivity(),"Uploaded Successfully",Toast.LENGTH_SHORT).show();
+	                	String message = "Uploaded Successfully";
+	                	
+	                	//Custom Toast
+	                	text.setText(message);
+	                	toast.setDuration(Toast.LENGTH_LONG);
+	                	toast.show();
+
 	                	newName.setText("");
 						editTextTags.setText("");
 						txtFileChose.setText("Choose File");
@@ -1137,6 +1113,7 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 		mBrowseFragment.onPickTrackClick(trackIndex, dialog);
 	}
 
+	@SuppressLint("HandlerLeak")
 	@Override
 	public void onDialogPositiveClick(DialogFragment dialog) {
 		final String TAG = "TEST";
