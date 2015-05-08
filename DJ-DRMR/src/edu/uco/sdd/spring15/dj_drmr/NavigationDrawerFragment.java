@@ -1,6 +1,5 @@
 package edu.uco.sdd.spring15.dj_drmr;
 
-import edu.uco.sdd.spring15.dj_drmr.record.RecordDialogFragment;
 import edu.uco.sdd.spring15.dj_drmr.stream.SearchFragment;
 import android.app.Activity;
 import android.app.ActionBar;
