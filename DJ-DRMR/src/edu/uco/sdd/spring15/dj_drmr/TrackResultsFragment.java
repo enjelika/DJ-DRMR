@@ -31,6 +31,7 @@ public class TrackResultsFragment extends DialogFragment{
 		}
 	}
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 		Bundle bundle = this.getArguments();
