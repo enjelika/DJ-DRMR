@@ -4,19 +4,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import android.content.Context;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.ProgressBar;
 import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain;
-import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain.RecordFragment;
 import edu.uco.sdd.spring15.dj_drmr.R;
 import edu.uco.sdd.spring15.dj_drmr.record.Encoder.Builder;
 
@@ -90,6 +86,7 @@ public class RecordMp3 {
 		}
 
 		new Thread() {
+			@SuppressWarnings("static-access")
 			@Override
 			public void run() {
 				android.os.Process

@@ -1,5 +1,6 @@
 package edu.uco.sdd.spring15.dj_drmr.record;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.widget.EditText;
 import edu.uco.sdd.spring15.dj_drmr.R;
 
 public class RecordDialogFragment extends DialogFragment {
@@ -37,6 +37,7 @@ public class RecordDialogFragment extends DialogFragment {
 		}
 	}
 
+	@SuppressLint("InflateParams")
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
