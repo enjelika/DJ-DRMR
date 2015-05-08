@@ -601,7 +601,6 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				Log.d("BrowseActivity", "onPickTrackClick");
 				resource = resourceList.get(trackIndex);
 				mService.initializeMediaPlayer(resourceList, trackIndex);
-				mController.show(0);
 			}
 		}
 		

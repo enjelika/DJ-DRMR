@@ -200,12 +200,16 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	}
 	
 	public void playPrev() {
-		if (--trackIndex < 0) trackIndex = resourceList.size()-1;
+		trackIndex--;
+		if (trackIndex < 0) {
+			trackIndex = resourceList.size()-1;
+		}
 		getNextTrack(trackIndex);
 	}
 	
 	public void playNext() {
-		if (++trackIndex >= resourceList.size()) {
+		trackIndex++;
+		if (trackIndex >= resourceList.size()) {
 			trackIndex = 0;
 		}
 		getNextTrack(trackIndex);
