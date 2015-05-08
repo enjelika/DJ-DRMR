@@ -5,7 +5,7 @@
     android:orientation="vertical" >
         
     <WebView android:id="@+id/webview_auth"
-        android:layout_width="525dp"
-        android:layout_height="800dp" />
+        android:layout_width="550sp"
+        android:layout_height="800sp" />
 
 </LinearLayout>

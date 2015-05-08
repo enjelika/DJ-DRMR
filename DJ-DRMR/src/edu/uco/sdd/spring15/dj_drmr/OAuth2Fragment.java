@@ -118,8 +118,9 @@ public class OAuth2Fragment extends DialogFragment {
         webViewOauth.getSettings().setLoadWithOverviewMode(true);
 		webViewOauth.getSettings().setUseWideViewPort(true);
 		
-		//removes blank space on the right of the WebView
-		webViewOauth.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+		//sets the webpage at 100% scale and places the scollbar within the WebView - Debra
+		webViewOauth.setInitialScale(100);
+		webViewOauth.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 
 		webViewOauth.loadUrl(url.toASCIIString());
       	

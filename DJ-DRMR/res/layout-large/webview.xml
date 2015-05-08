@@ -8,9 +8,8 @@
  
     <WebView 
         android:id="@+id/web_oauth" 
-        android:layout_marginRight="-7dp"
-        android:layout_height="800dp" 
-        android:layout_width="525dp">
+        android:layout_height="800sp" 
+        android:layout_width="fill_parent">
  	</WebView>
  	
 </LinearLayout>
