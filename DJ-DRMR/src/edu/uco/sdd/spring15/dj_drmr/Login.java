@@ -89,7 +89,6 @@ public class Login extends Activity implements OnClickListener{
 				text.setText(message);
 				toast.setDuration(Toast.LENGTH_LONG);
 				toast.show();
-//				Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT).show();
 			} else { //new AttemptLogin().execute();
 				if (hasToken) {
 					// start the main activity

@@ -9,6 +9,7 @@ import com.soundcloud.api.Endpoints;
 import com.soundcloud.api.Token;
 
 import edu.uco.sdd.spring15.dj_drmr.stream.SoundcloudResource;
+import android.annotation.SuppressLint;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,12 +25,14 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+@SuppressLint("SetJavaScriptEnabled")
 public class OAuth2Fragment extends DialogFragment {
 	
 //	public static ApiWrapper wrapper;
  
     private WebView webViewOauth;
-    private Resources res;
+    @SuppressWarnings("unused")
+	private Resources res;
     
 	private ApiWrapper wrapper;
 	public static Token token;
@@ -59,7 +62,8 @@ public class OAuth2Fragment extends DialogFragment {
  
     private void saveAccessToken(String url) {
     	Uri result = Uri.parse(url);
-        final String error = result.getQueryParameter("error");
+        @SuppressWarnings("unused")
+		final String error = result.getQueryParameter("error");
         final String code = result.getQueryParameter("code");
             
         // login to soundcloud
@@ -85,7 +89,9 @@ public class OAuth2Fragment extends DialogFragment {
         }).start();
         // wait for the runnable to finish - 
         // added this to keep the login screen from appearing twice
-        while (!loggedIn && !loginCancelled) { /* wait for login to complete */ }
+        while (!loggedIn && !loginCancelled) { 
+        	/* wait for login to complete */ 
+        }
         
         Intent intent2;
         if (token == null) {
@@ -106,8 +112,17 @@ public class OAuth2Fragment extends DialogFragment {
     public void onViewCreated(View arg0, Bundle arg1) {
         super.onViewCreated(arg0, arg1);
         //load the url of the oAuth login page
-      URI url = wrapper.authorizationCodeUrl(Endpoints.CONNECT, Token.SCOPE_NON_EXPIRING);
+        URI url = wrapper.authorizationCodeUrl(Endpoints.CONNECT, Token.SCOPE_NON_EXPIRING);
+		
+        //sets the webpage to fit within the WebView - Debra
+        webViewOauth.getSettings().setLoadWithOverviewMode(true);
+		webViewOauth.getSettings().setUseWideViewPort(true);
+		
+		//removes blank space on the right of the WebView
+		webViewOauth.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+
 		webViewOauth.loadUrl(url.toASCIIString());
+      	
 		//set the web client
 		webViewOauth.setWebViewClient(new WebViewClient(){
 			@Override
