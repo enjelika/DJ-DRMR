@@ -59,6 +59,8 @@
         </activity>
         <activity
             android:name=".WebViewActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:windowSoftInputMode="stateUnchanged|adjustPan"
             android:label="@string/WebViewActivity">
         </activity>
         <service

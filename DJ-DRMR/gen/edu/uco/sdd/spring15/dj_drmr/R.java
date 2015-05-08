@@ -48,9 +48,9 @@ public final class R {
         public static final int title=0x7f02000c;
     }
     public static final class id {
-        public static final int action_about=0x7f09002f;
-        public static final int action_logout=0x7f090030;
-        public static final int action_search=0x7f090031;
+        public static final int action_about=0x7f09002e;
+        public static final int action_logout=0x7f09002f;
+        public static final int action_search=0x7f090030;
         public static final int animation=0x7f090028;
         public static final int browse_menu=0x7f090007;
         public static final int btnBrowse=0x7f090013;
@@ -96,7 +96,6 @@ public final class R {
         public static final int txtFileChose=0x7f090002;
         public static final int uploadBtn=0x7f090006;
         public static final int web_oauth=0x7f09002d;
-        public static final int webview_auth=0x7f09002e;
         public static final int welcome_txt=0x7f090016;
     }
     public static final class layout {
@@ -119,7 +118,6 @@ public final class R {
         public static final int single_post=0x7f030010;
         public static final int splash_activity=0x7f030011;
         public static final int webview=0x7f030012;
-        public static final int webviewholder=0x7f030013;
     }
     public static final class menu {
         public static final int djdrmr_main=0x7f080000;
