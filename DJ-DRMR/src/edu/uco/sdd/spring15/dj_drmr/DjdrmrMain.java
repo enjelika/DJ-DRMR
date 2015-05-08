@@ -601,6 +601,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				Log.d("BrowseActivity", "onPickTrackClick");
 				resource = resourceList.get(trackIndex);
 				mService.initializeMediaPlayer(resourceList, trackIndex);
+				mController.show(0);
 			}
 		}
 		
@@ -618,7 +619,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			}
 		}
 
-		private void setController() {
+		public void setController() {
 			// set up MusicController
 			Log.d("BrowseFragment", "setController");
 			mController = new MusicController(getActivity());
@@ -650,19 +651,26 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		}
 		
 		@Override
+		public void setMediaController() {
+			setController();
+		}
+		
+		@Override
 		public void start() {
 			mService.startMediaPlayer();
+			setController();
 		}
 
 		@Override
 		public void pause() {
 			mService.pauseMediaPlayer();
+			setController();
 			playbackPaused = true;
 		}
 
 		@Override
 		public int getDuration() {
-			if(mService != null && bound && mService.isPlaying()) {
+			if(mService != null /*&& bound && mService.isPlaying()*/) {
 			    return mService.getDur();
 			}
 			else return 0;
@@ -670,7 +678,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 
 		@Override
 		public int getCurrentPosition() {
-			if(mService!=null && bound && mService.isPlaying()) {
+			if(mService!=null /*&& bound && mService.isPlaying()*/) {
 			    return mService.getPosn();
 			}
 			else return 0;

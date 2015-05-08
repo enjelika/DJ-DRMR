@@ -158,6 +158,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
  
         Log.d("MediaPlayerService","startMediaPlayer() called");
         mp.start();
+        mClient.setMediaController();
 	}
 	
 	public void pauseMediaPlayer() {

@@ -8,4 +8,6 @@ public interface IMediaPlayerServiceClient {
 	public void onInitializePlayerSuccess();
 	// player encountered an error
 	public void onError();
+	// set up mediacontroller
+	public void setMediaController();
 }
