@@ -1,21 +1,12 @@
 package edu.uco.sdd.spring15.dj_drmr.stream;
 
-//import java.io.BufferedReader;
-//import java.io.IOException;
-//import java.io.InputStream;
-//import java.io.InputStreamReader;
-
-//import org.apache.http.HttpEntity;
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -24,10 +15,6 @@ import com.soundcloud.api.ApiWrapper;
 import com.soundcloud.api.Http;
 import com.soundcloud.api.Request;
 import com.soundcloud.api.Token;
-import com.soundcloud.api.examples.CreateWrapper;
-
-import edu.uco.sdd.spring15.dj_drmr.DjdrmrMain;
-import edu.uco.sdd.spring15.dj_drmr.OAuth2Fragment;
 
 public class SoundcloudResource implements Parcelable {
 

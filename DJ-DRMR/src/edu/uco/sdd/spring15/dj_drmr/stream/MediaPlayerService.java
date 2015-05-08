@@ -29,7 +29,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	private final Binder mBinder = new MediaPlayerBinder();
 	private ArrayList<SoundcloudResource> resourceList = null;
 	private int trackIndex = 0;
-	private String currentTrackTitle;
+//	private String currentTrackTitle;
 	
 	private boolean paused=false;
 	
@@ -137,7 +137,6 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 		// not currently used
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void startMediaPlayer() {
 		
 //		//set to foreground
