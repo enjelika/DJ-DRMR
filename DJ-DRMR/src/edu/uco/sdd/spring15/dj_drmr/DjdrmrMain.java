@@ -303,10 +303,10 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 	public static class BrowseFragment extends Fragment implements IMediaPlayerServiceClient, TrackResultsListener, 
 																	OnClickListener, MediaPlayerControl, SearchListener {
 		
-		@SuppressWarnings("unused")
-		private StateMediaPlayer mp = null;
+//		@SuppressWarnings("unused")
+//		private StateMediaPlayer mp = null;
 		private MediaPlayerService mService;
-		@SuppressWarnings("unused")
+//		@SuppressWarnings("unused")
 		private SoundcloudResource resource = null;
 		private ArrayList<SoundcloudResource> resourceList;
 		private boolean bound;
@@ -323,7 +323,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
         
         // search variables
         private String paramStr;
-        @SuppressWarnings("unused")
+//        @SuppressWarnings("unused")
 		private boolean searching = false, byArtist = false;
         private SharedPreferences prefs;
 		
@@ -667,19 +667,20 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		@Override
 		public void start() {
 			mService.startMediaPlayer();
-			setController();
+//			setController();
 		}
 
 		@Override
 		public void pause() {
 			mService.pauseMediaPlayer();
-			setController();
+//			setController();
 			playbackPaused = true;
 		}
 
 		@Override
 		public int getDuration() {
 			if(mService != null /*&& bound && mService.isPlaying()*/) {
+				Log.e("BrowseFragment", "in getDuration()");
 			    return mService.getDur();
 			}
 			else return 0;

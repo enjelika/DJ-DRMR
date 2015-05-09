@@ -123,7 +123,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 
 	@Override
 	public void onPrepared(MediaPlayer mp) {
-		mClient.onInitializePlayerSuccess();
+//		mClient.onInitializePlayerSuccess();
 		startMediaPlayer();
 	}
 
@@ -139,7 +139,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	
 	public void startMediaPlayer() {
 		
-//		//set to foreground
+		//create notification
         Intent notificationIntent = new Intent(this, DjdrmrMain.class);
         notificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -156,7 +156,7 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
         // TODO: make notification into a controller
         startForeground(1, notification);
  
-        Log.d("MediaPlayerService","startMediaPlayer() called");
+        Log.e("MediaPlayerService","startMediaPlayer() called");
         mp.start();
         mClient.setMediaController();
 	}
@@ -188,7 +188,12 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	}
 	 
 	public int getDur(){
-	  return mp.getDuration();
+		Log.e("MediaPlayerService", "in getDur()");
+		if (mp != null && mp.isPlaying()) {
+			return mp.getDuration();
+		} else {
+			return 0;
+		}
 	}
 	 
 	public boolean isPlaying(){
@@ -200,15 +205,17 @@ public class MediaPlayerService extends Service implements OnBufferingUpdateList
 	}
 	
 	public void playPrev() {
-		trackIndex--;
+		Log.e("MediaPlayerService", "playPrev " + trackIndex);
 		if (trackIndex < 0) {
 			trackIndex = resourceList.size()-1;
 		}
 		getNextTrack(trackIndex);
+		trackIndex--;
 	}
 	
 	public void playNext() {
 		trackIndex++;
+		Log.e("MediaPlayerService", "playNext " + trackIndex);
 		if (trackIndex >= resourceList.size()) {
 			trackIndex = 0;
 		}
