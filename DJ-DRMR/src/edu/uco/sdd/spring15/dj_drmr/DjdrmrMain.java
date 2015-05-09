@@ -213,8 +213,18 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		
-		
-		
+		//Custom Toast variables - Debra
+        LayoutInflater inflater = getLayoutInflater();
+		Toast toast = new Toast(getApplicationContext());
+        View layout = inflater.inflate(R.layout.custom_toast, 
+        							   (ViewGroup) findViewById(R.id.toast_layout_root));
+        TextView text = (TextView) layout.findViewById(R.id.toast_txt);
+        String message = "Logged Out";
+        text.setText(message);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_SHORT);
+        toast.setView(layout);
+        
 		switch(id){
 			case R.id.action_about:
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -241,7 +251,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				edit.remove("access");
 				edit.remove("refresh");
 				edit.commit();
-				
+				toast.show();
 				Intent i = new Intent(this, Login.class);
 				startActivity(i);
 			
@@ -306,7 +316,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
         private MusicController mController;
         private boolean playbackPaused;
         
-        //Custom Toast variables
+        //Custom Toast variables - Debra
         private Toast toast;
         private View layout;
         private TextView text;
@@ -347,7 +357,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 			genres = res.getStringArray(R.array.soundcloud_genres);
 			lvGenres = (ListView) rootView.findViewById(R.id.genreList);
 			
-			//custom Toast
+			//Custom Toast - Debra
 			layout = inflater.inflate(R.layout.custom_toast, 
 									  (ViewGroup)rootView.findViewById(R.id.toast_layout_root));
 			
@@ -507,7 +517,7 @@ NavigationDrawerFragment.NavigationDrawerCallbacks, TrackResultsListener, Record
 				// error - empty param string
 				String message = res.getString(R.string.empty_search);
 				
-				//Custom Toast
+				//Custom Toast - Debra
 				text.setText(message);
 				toast.show();
 			}
@@ -933,7 +943,7 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 		private User user;
 		//private String fileName;
 		
-		//Custom Toast variables
+		//Custom Toast variables - Debra
         private Toast toast;
         private View layout;
         private TextView text;
@@ -965,7 +975,7 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 			View rootView = inflater.inflate(R.layout.activity_upload, container,
 					false);
 			
-			//custom Toast
+			//Custom Toast - Debra
 			layout = inflater.inflate(R.layout.custom_toast, 
 									  (ViewGroup)rootView.findViewById(R.id.toast_layout_root));
 			text = (TextView) layout.findViewById(R.id.toast_txt);
@@ -1004,7 +1014,7 @@ public static class RecordFragment extends Fragment implements RecordDialogListe
 	                	 }).start();
 	                	String message = "Uploaded Successfully";
 	                	
-	                	//Custom Toast
+	                	//Custom Toast - Debra
 	                	text.setText(message);
 	                	toast.setDuration(Toast.LENGTH_LONG);
 	                	toast.show();
